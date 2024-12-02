@@ -3,7 +3,7 @@ import Container from '../../../Components/User/Container.vue'
 import Title from '../../../Components/User/Title.vue'
 import InputField from '../../../Components/User/InputField.vue'
 import PrimaryBtn from '../../../Components/User/PrimaryBtn.vue'
-import { userForm } from "@inertiajs/vue3";
+import { useForm } from "@inertiajs/vue3";
 
 const form = useForm({
     name: '',

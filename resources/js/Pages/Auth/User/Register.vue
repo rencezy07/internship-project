@@ -27,6 +27,7 @@ const submit = () => {
 
 <template>
     <Head title="- Register"/>
+    
     <Container class="w-1/2">
         <div class="mb-8 text-center">
             <Title>Register a new Account</Title>
@@ -49,3 +50,4 @@ const submit = () => {
         </form>
     </Container>
 </template>
+

@@ -1,6 +1,7 @@
 <script setup>
 // import { switchTheme } from "../theme"; darkmode
 import NavLink from "../Components/User/NavLink.vue";
+import Footer from "../Components/User/Footer.vue";
 import { usePage } from "@inertiajs/vue3";
 import { computed, ref } from "vue";
 
@@ -18,7 +19,7 @@ const show = ref(false)
         <nav
             class="p-6 mx-auto max-w-screen-lg flex items-center justify-between"
         >
-            <NavLink routeName="home" componentName="Home">Home</NavLink>
+            <NavLink routeName="home" componentName="Home">Homers</NavLink>
             <div class="flex items-center">
                 <!-- AUTH -->
                 <div v-if="user" class="relative">
@@ -51,9 +52,11 @@ const show = ref(false)
                     <NavLink
                         routeName="register"
                         componentName="Auth/User/Register"
-                        >Register</NavLink
+                        type="user"
+                        >Registeruser</NavLink
                     >
                     <NavLink routeName="login" componentName="Auth/User/Login"
+                    type="user"
                         >Login</NavLink
                     >
                 </div>
@@ -62,6 +65,10 @@ const show = ref(false)
     </header>
 
     <main class="p-6">
+        <p>This is the Main Layout</p>
         <slot />
+        <div v-if="!user">
+            <Footer />
+        </div>
     </main>
 </template>

@@ -6,6 +6,7 @@
     import { ZiggyVue } from "../../vendor/tightenco/ziggy";
 
     import Main from "./Layouts/Main.vue";
+    import Merchant from "./Layouts/Merchant.vue";
     // import { setThemeOnLoad } from "./theme";
 
     createInertiaApp({
@@ -14,10 +15,15 @@
             const pages = import.meta.glob("./Pages/**/*.vue", { eager: true });
             let page = pages[`./Pages/${name}.vue`];
             
-            if (!page) { throw new Error(`Page not found: ${name}`); }
+                
+        page.default.layout = page.default.layout || Main;
+        return page;
 
-            page.default.layout = page.default.layout || Main;
-            return page;
+            // page.default.layout = page.default.layout || 
+            // (name.startsWith("Merchant/") ? Merchant : Main);
+
+        return page;
+
         },
         setup({ el, App, props, plugin }) {
             createApp({ render: () => h(App, props) })
