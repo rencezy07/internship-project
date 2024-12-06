@@ -1,6 +1,7 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 
+// Form for adding a new internship
 const internshipForm = useForm({
   internship_name: '',
   city: '',
@@ -10,18 +11,22 @@ const internshipForm = useForm({
   requirements: '',
 });
 
+// Fetch internships data passed from the controller
+const props = defineProps({
+  internships: Array,  // Internships passed from the controller
+});
+
 // Form submission
 const submitForm = () => {
-  console.log(internshipForm.data());  // Log the form data
-  internshipForm.post(route('company.internship.store'));
-};
-
+  form.post(route('company.updateApplicationStatus', { applicationId: props.applicationId }));
+}
 </script>
 
 <template>
   <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
     <h2 class="text-2xl font-semibold text-gray-700 mb-6">Add Internship</h2>
     
+    <!-- Internship Form -->
     <form @submit.prevent="submitForm">
       <div class="mb-4">
         <label for="internship_name" class="block text-sm font-medium text-gray-700">Internship Name</label>
@@ -104,6 +109,27 @@ const submitForm = () => {
         </button>
       </div>
     </form>
+
+    <!-- Display Internships -->
+    <h2 class="text-2xl font-semibold text-gray-700 mt-10 mb-6">Existing Internships</h2>
+    <div v-if="props.internships.length > 0">
+      <ul>
+        <!-- Loop through the internships array and display each internship -->
+        <li v-for="internship in props.internships" :key="internship.id" class="mb-4 p-4 border border-gray-300 rounded-md shadow-sm">
+          <h3 class="font-semibold text-xl">{{ internship.internship_name }}</h3>
+          <p class="text-gray-600">{{ internship.city }}</p>
+          <p class="text-sm text-gray-500">{{ internship.status }} | Salary: {{ internship.salary }}</p>
+          <p class="mt-2">{{ internship.about }}</p>
+          <p class="mt-2 font-semibold">Requirements:</p>
+          <p>{{ internship.requirements }}</p>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Message if no internships found -->
+    <div v-else>
+      <p>No internships found.</p>
+    </div>
   </div>
 </template>
 

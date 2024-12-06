@@ -47,6 +47,11 @@ Route::prefix('company')->name('company.')->group(function () {
         Route::post('/internships', [CompanyDashboardController::class, 'storeInternship'])->name('internship.store');
 
 
+        Route::get('/manage-internships', [CompanyDashboardController::class, 'manageInternships'])->name('company.manageInternships');
+        Route::put('/application/{applicationId}/status', [CompanyDashboardController::class, 'updateApplicationStatus'])->name('company.updateApplicationStatus');
+
+
+
         Route::get('/dashboard', [CompanyDashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [CompanyAuthController::class, 'logout'])->name('logout');
 
@@ -83,6 +88,9 @@ Route::prefix('user')->name('user.')->group(function () {
     });
 
     Route::middleware('auth:user')->group(function () {
+        Route::post('/apply/{internshipId}', [UserDashboardController::class, 'apply'])->name('apply');
+
+        Route::get('/application', [UserDashboardController::class, 'showApplications'])->name('application');
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
     });

@@ -29,6 +29,10 @@ class Internship extends Model
         'company_id',  // FK linking to company table
     ];
 
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
     // Define relationships if necessary
     public function company()
     {

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Company;
 
 use App\Models\Internship;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyDashboardController extends Controller
 {
@@ -12,10 +14,22 @@ class CompanyDashboardController extends Controller
     {
         return inertia('Company/Dashboard');
     }
+   
     public function showInternship()
     {
-        return inertia('Company/Internships');
+        // Get the authenticated company ID
+        $companyId = Auth::guard('company')->id();
+
+        // Fetch internships related to the logged-in company
+        $internships = Internship::where('company_id', $companyId)->get();
+
+        // Return the data to the view via Inertia
+        return inertia('Company/Internships', [
+            'internships' => $internships,
+        ]);
     }
+
+
 
     public function storeInternship(Request $request)
     {
@@ -46,6 +60,39 @@ class CompanyDashboardController extends Controller
 
     }
     
+
+
+    // user under review ---------------------------
+
+    public function manageInternships()
+{
+    // Get all the internships for the logged-in company
+    $internships = Internship::where('company_id', auth()->id()) // Assuming company_id is used to associate internships with companies
+        ->with('applications.user')  // Eager load applications and user data for each internship
+        ->get();
+
+    // Pass internships and applications to the view via Inertia
+    return inertia('Company/ManageInternships', [
+        'internships' => $internships,
+    ]);
+}
+
+// To update the application status
+public function updateApplicationStatus(Request $request, $applicationId)
+{
+    $request->validate([
+        'status' => 'required|in:under review,accepted,rejected',
+    ]);
+
+    // Find the application and update the status
+    $application = Application::findOrFail($applicationId);
+    $application->update(['status' => $request->status]);
+
+    // Return a response indicating success
+    return inertia('Company/ManageInternships');
+
+}
+
     
 
     
