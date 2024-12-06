@@ -10,9 +10,9 @@
             <div>
                 <h3 class="font-bold text-lg">Partnerships</h3>
                 <ul class="mt-4 space-y-2">
-                    <li><a :href="route('merchant')" class="hover:underline">Become a Merchant</a></li>
+                    <!-- <li><a :href="route('merchant')" class="hover:underline">Become a Merchant</a></li> -->
            
-                    <li><a :href="route('home')" class="hover:underline">Login as User</a></li>
+                    <!-- <li><a :href="route('user.home')" class="hover:underline">Login as User</a></li> -->
                     <!-- <li>
                         <a :href="route('merchant.register')" class="hover:underline">Merchant Sign up</a>
                     </li>

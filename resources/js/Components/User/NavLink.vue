@@ -1,4 +1,6 @@
 <script setup>
+import { Link } from "@inertiajs/vue3"; // Import the Inertia.js Link component
+
 defineProps({
     routeName: String,
     componentName: String,
