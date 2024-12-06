@@ -42,8 +42,16 @@ Route::prefix('company')->name('company.')->group(function () {
     });
 
     Route::middleware('auth:company')->group(function () {
+        
+        Route::get('/internships', [CompanyDashboardController::class, 'showInternship'])->name('internships');
+        Route::post('/internships', [CompanyDashboardController::class, 'storeInternship'])->name('internship.store');
+
+
         Route::get('/dashboard', [CompanyDashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [CompanyAuthController::class, 'logout'])->name('logout');
+
+         
+        
     });
 });
 

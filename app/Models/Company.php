@@ -17,6 +17,7 @@ class Company extends Authenticatable
      * @var array<int, string>
      */
     protected $table = 'company'; // Explicitly define the table name
+    protected $primaryKey = 'company_id';
 
     protected $fillable = [
         'company_name',
