@@ -21,7 +21,7 @@ const company = computed(() => page.props.auth.user);  // Check if the user is a
             <a href="/company/internships" class="block hover:bg-gray-700">Add Internships</a>
           </li>
           <li class="p-4 hover:bg-gray-700">
-            <a href="/company/manage-internships" class="block hover:bg-gray-700">Manage Internships</a>
+            <a href="/company/manage-internships" class="block hover:bg-gray-700">Manage Applicants</a>
           </li>
           <li class="p-4 hover:bg-gray-700">
             <Link

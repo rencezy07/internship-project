@@ -4,7 +4,7 @@ import { useForm, usePage } from "@inertiajs/vue3";
 
 // Props passed from the backend
 const props = defineProps({
-  internships: Array, // List of internships
+  internships: Array, 
 });
 
 // Access page props using usePage()
@@ -23,16 +23,12 @@ const applicationForm = useForm({
   },
 });
 
-// Reference for the modal
 const applyModal = ref(null);
 
-// Automatically select the first internship on page load
 onMounted(() => {
   if (props.internships.length > 0) {
     selectedInternship.value = props.internships[0];
-    console.log("Default selected internship:", selectedInternship.value);
   } else {
-    console.warn("No internships available to select.");
   }
 });
 

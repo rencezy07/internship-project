@@ -44,6 +44,12 @@ class CompanyDashboardController extends Controller
             'about' => 'required|string',
             'requirements' => 'required|string',
             'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:2048', // Validate image
+            'duration' => 'required|string|max:255', // Now required
+            'start_date' => 'required|date', // Now required
+            'end_date' => 'required|date', // Now required
+            'benefits' => 'required|string', // Now required
+            'application_deadline' => 'required|date', // Now required
+            'tags' => 'required|string', // Now required
 
         ]);
     
@@ -52,7 +58,7 @@ class CompanyDashboardController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('internship_images', 'public'); // Save image in storage/app/public/internship_images
+            $imagePath = $request->file('image')->store('internship_images', 'private'); // Save image in storage/app/public/internship_images
         }
     // Create the internship with the authenticated company's ID
     Internship::create([
@@ -64,6 +70,12 @@ class CompanyDashboardController extends Controller
         'requirements' => $validated['requirements'],
         'company_id' => $company_id,
         'image' => $imagePath, // Store the image path in the database
+        'duration' => $request->duration,
+        'start_date' => $request->start_date,
+        'end_date' => $request->end_date,
+        'benefits' => $request->benefits,
+        'application_deadline' => $request->application_deadline,
+        'tags' => $request->tags,
     ]);
 
     return redirect()->route('company.internships')->with('success', 'Internship created successfully');

@@ -23,7 +23,6 @@ const sortedNotifications = computed(() => {
   return [...notifications.value].reverse(); // Spread operator to avoid mutation
 });
 
-console.log("Notifications:", notifications.value);
 
 // Track if the notification dropdown is open or closed
 const isNotificationsOpen = ref(false); // Correctly initialize isNotificationsOpen
@@ -32,7 +31,6 @@ const isNotificationsOpen = ref(false); // Correctly initialize isNotificationsO
 const isDropdownOpen = ref(false);
 
 const toggleNotifications = () => {
-    console.log("Notifications clicked", notifications.value); // Check notifications value on click
 
     isNotificationsOpen.value = !isNotificationsOpen.value;
 };

@@ -18,6 +18,8 @@ class Internship extends Model
     // Define the table name if it differs from the default plural form
     protected $table = 'internships';
 
+    protected $primaryKey = 'internship_id';  // Set primary key as 'internship_id'
+
     // Specify the fillable fields to allow mass assignment
     protected $fillable = [
         'internship_name',
@@ -27,6 +29,13 @@ class Internship extends Model
         'about',
         'requirements',
         'company_id',  // FK linking to company table
+        'image',
+        'duration',
+        'start_date',
+        'end_date',
+        'benefits',
+        'application_deadline',
+        'tags',
     ];
 
     public function applications()
