@@ -26,7 +26,6 @@ class UserAuthController extends Controller
 
     public function dashboard()
     {
-        return inertia('User/Dashboard');
     }
 
     public function logout()

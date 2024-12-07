@@ -29,7 +29,6 @@ const applyModal = ref(null);
 // Automatically select the first internship on page load
 onMounted(() => {
   if (props.internships.length > 0) {
-    console.log("Internships data:", props.internships);
     selectedInternship.value = props.internships[0];
     console.log("Default selected internship:", selectedInternship.value);
   } else {
@@ -54,21 +53,16 @@ const handleFileChange = (event) => {
   }
 };
 
-const apply = () => {
-  const internshipId = selectedInternship.value?.internship_id; // Use the correct property name
-  console.log("Selected internship in apply:", selectedInternship.value);
-  console.log("Applying for internship with ID:", internshipId);
-
+// Open the modal and set the internship ID
+const apply = (internshipId) => {
   if (!internshipId) {
-    alert("No internship selected. Please select an internship first.");
+    console.error("No internship ID provided.");
     return;
   }
-
+  console.log("Setting internship ID:", internshipId);
   applicationForm.internship_id = internshipId;
-  applyModal.value.showModal(); // Open the modal
+  applyModal.value.showModal(); // Use ref to show the modal
 };
-
-
 
 const submitApplication = () => {
   if (!applicationForm.internship_id) {
@@ -99,7 +93,7 @@ const cancelApplication = () => {
 <template>
   <div class="flex max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
     <!-- Left Column: Internship List -->
-    <div class="w-1/3 border-r pr-4">
+    <div class="w-1/3 border-r pr-4 left-column">
       <h2 class="text-2xl font-semibold text-gray-700 mb-4">Available Internships</h2>
       <ul>
         <li
@@ -108,10 +102,10 @@ const cancelApplication = () => {
           @click="selectInternship(internship)"
           class="cursor-pointer p-4 mb-4 border border-gray-300 rounded-md shadow-sm hover:bg-gray-100"
         >
-        <p class="text-sm text-gray-500">{{ internship.company_name }}</p>
         <img v-if="internship.image" :src="`/storage/${internship.image}`" alt="Internship Image">
-          hahahaha
+
           <h3 class="font-semibold text-lg">{{ internship.internship_name }}</h3>
+          <p class="text-sm text-gray-500">{{ internship.company_name }}</p>
           <p class="text-sm text-gray-500">{{ internship.city }}</p>
           <p class="text-gray-600 mt-2">{{ internship.description }}</p>
         </li>
@@ -119,7 +113,7 @@ const cancelApplication = () => {
     </div>
 
     <!-- Right Column: Internship Details -->
-    <div class="w-2/3 pl-4">
+    <div class="w-2/3 pl-4 right-column">
       <div v-if="selectedInternship" class="p-4 bg-gray-50 rounded-md shadow-md">
         <h2 class="text-2xl font-semibold text-gray-800">
           {{ selectedInternship.internship_name }}
@@ -142,8 +136,8 @@ const cancelApplication = () => {
 
         <!-- Apply Button -->
         <button
-         @click="apply"
-  :disabled="!selectedInternship"
+          @click="apply(selectedInternship.id)"
+          :disabled="!selectedInternship"
           class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
         >
           Apply
@@ -205,3 +199,20 @@ const cancelApplication = () => {
     </dialog>
   </div>
 </template>
+
+
+<style scoped>
+img {
+  height: 60px;
+  width: 60px;
+}
+.right-column {
+  position: sticky;
+  top: 100px;  /* Adjust this value to match the height of your navbar */
+  background-color: white;
+  z-index: 10; /* Ensure the sticky column is above other content */
+  padding-left: 20px;
+  padding-right: 20px;
+  height: calc(100vh - 200px); /* Adjust for top offset */
+}
+</style>

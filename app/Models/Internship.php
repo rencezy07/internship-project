@@ -26,8 +26,7 @@ class Internship extends Model
         'salary',
         'about',
         'requirements',
-        'company_id',
-        'image',  // FK linking to company table
+        'company_id',  // FK linking to company table
     ];
 
     public function applications()
@@ -39,4 +38,7 @@ class Internship extends Model
     {
         return $this->belongsTo(Company::class, 'company_id'); // Link 'company_id' to 'id' of company
     }
+
+    // Internship Model
+
 }

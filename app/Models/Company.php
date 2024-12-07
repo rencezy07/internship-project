@@ -35,6 +35,12 @@ class Company extends Authenticatable
         'remember_token',
     ];
 
+    // Company Model
+public function internships()
+{
+    return $this->hasMany(Internship::class);
+}
+
     /**
      * Get the attributes that should be cast.
      *

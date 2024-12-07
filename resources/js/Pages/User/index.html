@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown with OK/Cancel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+        button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dropdown with OK/Cancel</h1>
+    <form id="dropdownForm" onsubmit="return false;">
+        <label for="dropdown">Choose a value:</label>
+        <select id="dropdown">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <div class="buttons">
+            <button type="button" id="okButton">OK</button>
+            <button type="button" id="cancelButton">Cancel</button>
+        </div>
+    </form>
+
+    <script>
+        const dropdown = document.getElementById('dropdown');
+        const okButton = document.getElementById('okButton');
+        const cancelButton = document.getElementById('cancelButton');
+
+        let previousValue = dropdown.value; // Store the initial value
+
+        okButton.addEventListener('click', () => {
+            previousValue = dropdown.value; // Update previous value
+            alert(`Value updated to: ${dropdown.value}`);
+        });
+
+        cancelButton.addEventListener('click', () => {
+            dropdown.value = previousValue; // Revert to previous value
+            alert('Operation canceled');
+        });
+    </script>
+</body>
+</html>

@@ -20,6 +20,12 @@ class Application extends Model
     // Relationship with Internship
     public function internship()
     {
-        return $this->belongsTo(Internship::class);
+        return $this->belongsTo(Internship::class, 'internship_id', 'internship_id'); // foreignKey, ownerKey
     }
+
+    public function applications()
+{
+    return $this->hasMany(Application::class, 'internship_id');
+}
+
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Models\Internship;
 use App\Models\Application;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -11,22 +11,27 @@ use App\Models\InternshipWithCompany;
 
 class UserDashboardController extends Controller
 {
-    // Display internships in the dashboard
     public function index()
     {
-        // Get the authenticated user using the default guard
+        // Get the authenticated user
         $user = auth()->user();
-
-              
-        // Fetch internships from the materialized view
-        $internships = InternshipWithCompany::all();
-
-        // Pass the internships with the application status to the view via Inertia
+    
+        // Fetch the latest notifications
+        $notifications = Notification::where('user_id', $user->id)->get();
+    
+        // Fetch internships related to the user
+        $internships = InternshipWithCompany::whereNotIn('id', function ($query) {
+            $query->select('internship_id')
+                ->from('applications')
+                ->where('user_id', auth()->id());
+        })->get();
+    
+        // Pass the data to Inertia
         return inertia("User/Dashboard", [
+            "notifications" => $notifications,
             "internships" => $internships,
             "user" => [
                 "name" => $user->name,
-                "email" => $user->email,
             ],
         ]);
     }
@@ -37,8 +42,7 @@ class UserDashboardController extends Controller
         // Validate the uploaded files
         $request->validate([
             "documents.resume" => "required|file|mimes:pdf,doc,docx|max:10240",
-            "documents.cover_letter" =>
-                "required|file|mimes:pdf,doc,docx|max:10240",
+            "documents.cover_letter" => "required|file|mimes:pdf,doc,docx|max:10240",
         ]);
 
         // Check if the user has already applied to this internship
@@ -47,19 +51,21 @@ class UserDashboardController extends Controller
             ->first();
 
         if ($existingApplication) {
-            return back()->with(
-                "error",
-                "You have already applied to this internship."
-            );
+            return back()->with("error", "You have already applied to this internship.");
         }
 
         // Store the uploaded files
-        $resumePath = $request
-            ->file("documents.resume")
-            ->store("applications", "public");
-        $coverLetterPath = $request
-            ->file("documents.cover_letter")
-            ->store("applications", "public");
+        try {
+            $resumePath = $request
+                ->file("documents.resume")
+                ->storeAs("applications/" . auth()->id(), "resume_" . time() . "." . $request->file('documents.resume')->getClientOriginalExtension(), "private");
+
+            $coverLetterPath = $request
+                ->file("documents.cover_letter")
+                ->storeAs("applications/" . auth()->id(), "cover_letter_" . time() . "." . $request->file('documents.cover_letter')->getClientOriginalExtension(), "private");
+        } catch (\Exception $e) {
+            return back()->with('error', 'There was an error uploading your files. Please try again.');
+        }
 
         // Create the application record
         Application::create([
@@ -70,10 +76,7 @@ class UserDashboardController extends Controller
             "status" => "under review", // Set the initial status
         ]);
 
-        return back()->with(
-            "success",
-            "Your application has been submitted and is under review."
-        );
+        return back()->with("success", "Your application has been submitted and is under review.");
     }
 
     // Display the list of applications the user has made
@@ -88,18 +91,19 @@ class UserDashboardController extends Controller
         ]);
     }
 
+    // Reject the internship application
     public function rejectApplication($internshipId)
     {
         $application = Application::where("user_id", auth()->id())
             ->where("internship_id", $internshipId)
             ->first();
 
-        if ($application) {
-            $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
+        if (!$application) {
+            return redirect()->back()->with('error', 'Application not found or already processed.');
         }
 
-        return redirect()
-            ->back()
-            ->with("success", "Application has been rejected.");
+        $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
+
+        return redirect()->back()->with("success", "Application has been rejected.");
     }
 }
