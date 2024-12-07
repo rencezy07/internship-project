@@ -7,6 +7,7 @@ use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\InternshipWithCompany;
 
 class UserDashboardController extends Controller
 {
@@ -16,12 +17,9 @@ class UserDashboardController extends Controller
         // Get the authenticated user using the default guard
         $user = auth()->user();
 
-        // Retrieve all internships and add application status
-        $internships = Internship::with([
-            "applications" => function ($query) use ($user) {
-                $query->where("user_id", $user->id); // Filter by current user's application
-            },
-        ])->get();
+              
+        // Fetch internships from the materialized view
+        $internships = InternshipWithCompany::all();
 
         // Pass the internships with the application status to the view via Inertia
         return inertia("User/Dashboard", [
