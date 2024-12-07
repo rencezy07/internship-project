@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('internship_id')->constrained('internships')->onDelete('cascade');
+            $table->foreignId('internship_id')->constrained('internships')->onDelete('cascade');   
             $table->string('documents');
             $table->enum('status', ['under review', 'accepted', 'rejected'])->default('under review');
             $table->timestamps();

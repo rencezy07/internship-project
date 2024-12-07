@@ -79,6 +79,7 @@ const resetFileInputs = () => {
     <div v-if="props.internships.length > 0">
       <ul>
         <li v-for="internship in props.internships" :key="internship.id" class="mb-4 p-4 border border-gray-300 rounded-md shadow-sm">
+          <img v-if="internship.image" :src="`/storage/${internship.image}`" alt="Internship Image">
           <h3 class="font-semibold text-xl">{{ internship.internship_name }}</h3>
           <p class="text-gray-600">{{ internship.city }}</p>
           <p class="text-sm text-gray-500">{{ internship.status }} | Salary: {{ internship.salary }}</p>

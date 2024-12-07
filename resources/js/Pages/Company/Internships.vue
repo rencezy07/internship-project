@@ -9,6 +9,7 @@ const internshipForm = useForm({
   salary: '',
   about: '',
   requirements: '',
+  image: 'null',
 });
 
 // Fetch internships data passed from the controller
@@ -16,10 +17,16 @@ const props = defineProps({
   internships: Array,  // Internships passed from the controller
 });
 
+
 // Form submission
 const submitForm = () => {
-  form.post(route('company.updateApplicationStatus', { applicationId: props.applicationId }));
-}
+  internshipForm.post(route('company.internship.store'), {
+    onSuccess: () => {
+      internshipForm.reset();
+    },
+  });
+};
+
 </script>
 
 <template>
@@ -28,6 +35,19 @@ const submitForm = () => {
     
     <!-- Internship Form -->
     <form @submit.prevent="submitForm">
+
+      <div class="mb-4">
+        <label for="image" class="block text-sm font-medium text-gray-700">Upload Image</label>
+        <input
+          @change="event => (internshipForm.image = event.target.files[0])"
+          type="file"
+          id="image"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          accept="image/*"
+          required
+        />
+      </div>
+
       <div class="mb-4">
         <label for="internship_name" class="block text-sm font-medium text-gray-700">Internship Name</label>
         <input
@@ -116,12 +136,15 @@ const submitForm = () => {
       <ul>
         <!-- Loop through the internships array and display each internship -->
         <li v-for="internship in props.internships" :key="internship.id" class="mb-4 p-4 border border-gray-300 rounded-md shadow-sm">
+          <img v-if="internship.image" :src="`/storage/${internship.image}`" alt="Internship Image">
           <h3 class="font-semibold text-xl">{{ internship.internship_name }}</h3>
           <p class="text-gray-600">{{ internship.city }}</p>
           <p class="text-sm text-gray-500">{{ internship.status }} | Salary: {{ internship.salary }}</p>
           <p class="mt-2">{{ internship.about }}</p>
           <p class="mt-2 font-semibold">Requirements:</p>
           <p>{{ internship.requirements }}</p>
+
+
         </li>
       </ul>
     </div>

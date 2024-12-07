@@ -41,10 +41,17 @@ class CompanyDashboardController extends Controller
             'salary' => 'required|numeric',
             'about' => 'required|string',
             'requirements' => 'required|string',
+            'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:2048', // Validate image
+
         ]);
     
 
         $company_id = auth()->user()->company_id; // Adjust to match your relationship and field name
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('internship_images', 'public'); // Save image in storage/app/public/internship_images
+        }
     // Create the internship with the authenticated company's ID
     Internship::create([
         'internship_name' => $validated['internship_name'],
@@ -54,6 +61,7 @@ class CompanyDashboardController extends Controller
         'about' => $validated['about'],
         'requirements' => $validated['requirements'],
         'company_id' => $company_id,
+        'image' => $imagePath, // Store the image path in the database
     ]);
 
     return redirect()->route('company.internships')->with('success', 'Internship created successfully');

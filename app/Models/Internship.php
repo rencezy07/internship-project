@@ -26,7 +26,8 @@ class Internship extends Model
         'salary',
         'about',
         'requirements',
-        'company_id',  // FK linking to company table
+        'company_id',
+        'image',  // FK linking to company table
     ];
 
     public function applications()
