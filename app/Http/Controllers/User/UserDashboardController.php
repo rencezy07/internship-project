@@ -19,12 +19,8 @@ class UserDashboardController extends Controller
         // Fetch the latest notifications
         $notifications = Notification::where('user_id', $user->id)->get();
     
-        // Fetch internships related to the user
-        $internships = InternshipWithCompany::whereNotIn('id', function ($query) {
-            $query->select('internship_id')
-                ->from('applications')
-                ->where('user_id', auth()->id());
-        })->get();
+        // Fetch internships
+        $internships = InternshipWithCompany::all();
     
         // Pass the data to Inertia
         return inertia("User/Dashboard", [
@@ -32,9 +28,13 @@ class UserDashboardController extends Controller
             "internships" => $internships,
             "user" => [
                 "name" => $user->name,
+                "email" => $user->email,
             ],
         ]);
     }
+    
+
+ 
 
     // Handle the internship application
     public function apply(Request $request, $internshipId)
@@ -42,7 +42,8 @@ class UserDashboardController extends Controller
         // Validate the uploaded files
         $request->validate([
             "documents.resume" => "required|file|mimes:pdf,doc,docx|max:10240",
-            "documents.cover_letter" => "required|file|mimes:pdf,doc,docx|max:10240",
+            "documents.cover_letter" =>
+                "required|file|mimes:pdf,doc,docx|max:10240",
         ]);
 
         // Check if the user has already applied to this internship
@@ -51,21 +52,19 @@ class UserDashboardController extends Controller
             ->first();
 
         if ($existingApplication) {
-            return back()->with("error", "You have already applied to this internship.");
+            return back()->with(
+                "error",
+                "You have already applied to this internship."
+            );
         }
 
         // Store the uploaded files
-        try {
-            $resumePath = $request
-                ->file("documents.resume")
-                ->storeAs("applications/" . auth()->id(), "resume_" . time() . "." . $request->file('documents.resume')->getClientOriginalExtension(), "private");
-
-            $coverLetterPath = $request
-                ->file("documents.cover_letter")
-                ->storeAs("applications/" . auth()->id(), "cover_letter_" . time() . "." . $request->file('documents.cover_letter')->getClientOriginalExtension(), "private");
-        } catch (\Exception $e) {
-            return back()->with('error', 'There was an error uploading your files. Please try again.');
-        }
+        $resumePath = $request
+            ->file("documents.resume")
+            ->store("applications", "private");
+        $coverLetterPath = $request
+            ->file("documents.cover_letter")
+            ->store("applications", "private");
 
         // Create the application record
         Application::create([
@@ -76,7 +75,10 @@ class UserDashboardController extends Controller
             "status" => "under review", // Set the initial status
         ]);
 
-        return back()->with("success", "Your application has been submitted and is under review.");
+        return back()->with(
+            "success",
+            "Your application has been submitted and is under review."
+        );
     }
 
     // Display the list of applications the user has made
@@ -91,19 +93,18 @@ class UserDashboardController extends Controller
         ]);
     }
 
-    // Reject the internship application
     public function rejectApplication($internshipId)
     {
         $application = Application::where("user_id", auth()->id())
             ->where("internship_id", $internshipId)
             ->first();
 
-        if (!$application) {
-            return redirect()->back()->with('error', 'Application not found or already processed.');
+        if ($application) {
+            $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
         }
 
-        $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
-
-        return redirect()->back()->with("success", "Application has been rejected.");
+        return redirect()
+            ->back()
+            ->with("success", "Application has been rejected.");
     }
 }
