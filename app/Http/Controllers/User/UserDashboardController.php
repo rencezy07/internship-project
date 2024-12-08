@@ -12,8 +12,10 @@ use App\Models\InternshipWithCompany;
 class UserDashboardController extends Controller
 {   
 
+    
 
-    public function index()
+
+    public function home()
     {
         // Get the authenticated user
         $user = auth()->user();

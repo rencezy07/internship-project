@@ -95,7 +95,7 @@ Route::prefix('user')->name('user.')->group(function () {
     
 
         Route::get('/application', [UserDashboardController::class, 'showApplications'])->name('application');
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/home', [UserDashboardController::class, 'home'])->name('home');
         Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
     });
 });
