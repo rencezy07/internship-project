@@ -13,6 +13,9 @@ const highlightStatus = (message) => {
 };
 
 
+const notificationCount = computed(() => page.props.notificationCount || 0); // Default to 0
+
+
 // Get the user data from the page props (for logged-in user)
 const page = usePage();
 const user = computed(() => page.props.auth.user); // Get the user object
@@ -47,7 +50,7 @@ const toggleDropdown = () => {
     <nav class="bg-gray-800 text-white p-4 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <!-- Logo or Title -->
-        <div class="text-lg font-bold">User Panel</div>
+        <div class="text-lg font-bold">Home</div>
 
         <!-- Navbar links -->
         <div class="flex space-x-4">
@@ -68,10 +71,17 @@ const toggleDropdown = () => {
           <div v-if="user" class="relative">
             <!-- Notifications Icon Button Start -->
             <button @click="toggleNotifications" class="relative">
-              <span class="text-white px-4 py-2 rounded-lg">
+              <span class="text-white px-4 py-2 rounded-lg relative">
                 <!-- Notification Bell Icon -->
                 <i class="fa fa-bell"></i>
               </span>
+              <span
+      v-if="notificationCount > 0"
+      class="absolute -top-1 right-1.5 bg-red-500 text-white font-bold rounded-full h-4 w-4 flex items-center justify-center"
+      style="font-size: 9px;"
+    >
+      {{ notificationCount }}
+    </span>
             </button>
             <!-- Notifications Icon Button End -->
             <button
@@ -84,11 +94,13 @@ const toggleDropdown = () => {
             <!-- Notifications Dropdown Start -->
             <div
               v-if="isNotificationsOpen"
-              class="absolute top-16 right-4 bg-white text-black shadow-lg mt-2 rounded-lg w-64 max-h-64 overflow-y-auto notifications-dropdown"
+              class="absolute top-16 right-4 bg-white text-black shadow-lg mt-2 rounded-lg w-64 max-h-64  notifications-dropdown"
             >
               <div class="p-4">
                 <!-- Check if there are notifications -->
                 <div class="font-semibold text-lg mb-2">Notifications</div>
+                <div class="overflow-y-auto max-h-48">
+
                 <ul class="space-y-2">
                   <!-- If no notifications -->
                   <li
@@ -112,6 +124,8 @@ const toggleDropdown = () => {
                   </li>
                 </ul>
               </div>
+
+              </div>
             </div>
             <!-- Notifications Dropdown End -->
 
@@ -123,7 +137,7 @@ const toggleDropdown = () => {
               <ul>
                 <li>
                   <Link
-                    :href="route('user.dashboard')"
+                    :href="route('user.home')"
                     class="block px-4 py-2 hover:bg-gray-200"
                   >
                     Home
@@ -133,6 +147,14 @@ const toggleDropdown = () => {
                     class="block px-4 py-2 hover:bg-gray-200"
                   >
                     My Applications
+                  </Link>
+                  <Link
+                    :href="route('user.logout')"
+                    method="post"
+                    as="button"
+                    class="block px-4 py-2 hover:bg-gray-200"
+                  >
+                    My Profile
                   </Link>
                   <Link
                     :href="route('user.logout')"

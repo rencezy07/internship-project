@@ -18,15 +18,13 @@ class UserAuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('user')->attempt($credentials)) {
-            return redirect()->route('user.dashboard');
+            return redirect()->route('user.home');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials']);
     }
 
-    public function dashboard()
-    {
-    }
+   
 
     public function logout()
     {

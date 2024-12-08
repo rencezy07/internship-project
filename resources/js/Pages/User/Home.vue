@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 
+
+
 // Props passed from the backend
 const props = defineProps({
   internships: Array, 
@@ -28,6 +30,7 @@ const applyModal = ref(null);
 onMounted(() => {
   if (props.internships.length > 0) {
     selectedInternship.value = props.internships[0];
+
   } else {
   }
 });
@@ -82,6 +85,9 @@ const submitApplication = () => {
 
 // Cancel application modal
 const cancelApplication = () => {
+  if (confirm("Are you sure you want to cancel this application?")) {
+    applyModal.value.close();
+  }
   applyModal.value.close(); // Use ref to close the modal
 };
 </script>
@@ -120,8 +126,20 @@ const cancelApplication = () => {
           <span class="font-semibold">City:</span> {{ selectedInternship.city }}
         </p>
         <p class="text-gray-500">
-          <span class="font-semibold">Status:</span> {{ selectedInternship.status }}
+          <span class="font-semibold">Employment Type:</span> {{ selectedInternship.employment_type }}
         </p>
+        <p class="text-gray-500">
+  <span class="font-semibold">Application Deadline:</span>
+  {{(selectedInternship.application_deadline)  }} 
+</p>
+
+              <p class="text-gray-500">
+        <span class="font-semibold">Status: &nbsp;</span>
+        <span :class="selectedInternship.is_open ? 'text-green-500' : 'text-red-500'">
+          {{ selectedInternship.is_open ? 'Active' : 'Inactive' }}
+        </span>
+      </p>
+
         <p class="text-gray-500">
           <span class="font-semibold">Salary:</span> {{ selectedInternship.salary }}
         </p>
@@ -132,7 +150,7 @@ const cancelApplication = () => {
 
         <!-- Apply Button -->
         <button
-          @click="apply(selectedInternship.id)"
+          @click="apply(selectedInternship.internship_id)"
           :disabled="!selectedInternship"
           class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
         >
@@ -143,56 +161,98 @@ const cancelApplication = () => {
     </div>
 
     <!-- Modal for applying to an internship -->
-    <dialog ref="applyModal" id="applyModal" class="p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">Upload Documents</h2>
-      <form @submit.prevent="submitApplication" enctype="multipart/form-data">
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">Your Name</label>
-          <p class="mt-1 text-gray-600">{{ user.name }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">Your Email</label>
-          <p class="mt-1 text-gray-600">{{ user.email }}</p>
-        </div>
-        <div class="mb-4">
-          <label for="resume" class="block text-sm font-medium text-gray-700">Upload your resume</label>
-          <input
-            type="file"
-            id="resume"
-            name="resume"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            @change="handleFileChange"
-            required
-          />
-        </div>
-        <div class="mb-4">
-          <label for="cover_letter" class="block text-sm font-medium text-gray-700">Upload your cover letter</label>
-          <input
-            type="file"
-            id="cover_letter"
-            name="cover_letter"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            @change="handleFileChange"
-            required
-          />
-        </div>
-        <div class="flex justify-end">
-          <button
-            type="submit"
-            class="bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
-          >
-            Submit Application
-          </button>
-          <button
-            type="button"
-            @click="cancelApplication"
-            class="ml-4 bg-gray-500 text-white px-6 py-2 rounded-md shadow-md hover:bg-gray-600 focus:outline-none"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </dialog>
+    <dialog
+  ref="applyModal"
+  id="applyModal"
+  class="p-6 rounded-lg shadow-lg max-w-lg w-full"
+  aria-labelledby="upload-documents-title"
+  aria-describedby="upload-documents-description"
+>
+  <h2 id="upload-documents-title" class="text-xl font-semibold text-gray-700 mb-4">
+    Upload Documents
+  </h2>
+  <p id="upload-documents-description" class="sr-only">
+    Provide your resume and cover letter to apply for this internship.
+  </p>
+
+  <form @submit.prevent="submitApplication" enctype="multipart/form-data">
+    <!-- User Name -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Your Name</label>
+      <p class="mt-1 text-gray-600">{{ user.name }}</p>
+    </div>
+
+    <!-- User Email -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Your Email</label>
+      <p class="mt-1 text-gray-600">{{ user.email }}</p>
+    </div>
+
+    <!-- Resume Upload -->
+    <div class="mb-4">
+      <label for="resume" class="block text-sm font-medium text-gray-700">Upload your resume</label>
+      <input
+        type="file"
+        id="resume"
+        name="resume"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        @change="handleFileChange"
+        required
+      />
+      <!-- File Preview -->
+      <p v-if="applicationForm.documents.resume" class="text-sm text-gray-500 mt-2">
+        Selected File: {{ applicationForm.documents.resume.name }}
+      </p>
+      <!-- Error Message -->
+      <div v-if="applicationForm.errors.resume" class="text-red-500 text-sm mt-1">
+        {{ applicationForm.errors.resume }}
+      </div>
+    </div>
+
+    <!-- Cover Letter Upload -->
+    <div class="mb-4">
+      <label for="cover_letter" class="block text-sm font-medium text-gray-700">
+        Upload your cover letter
+      </label>
+      <input
+        type="file"
+        id="cover_letter"
+        name="cover_letter"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        @change="handleFileChange"
+        required
+      />
+      <!-- File Preview -->
+      <p v-if="applicationForm.documents.cover_letter" class="text-sm text-gray-500 mt-2">
+        Selected File: {{ applicationForm.documents.cover_letter.name }}
+      </p>
+      <!-- Error Message -->
+      <div v-if="applicationForm.errors.cover_letter" class="text-red-500 text-sm mt-1">
+        {{ applicationForm.errors.cover_letter }}
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end space-x-4">
+      <button
+        type="submit"
+        :disabled="applicationForm.processing"
+        class="bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
+      >
+        <span v-if="applicationForm.processing">Submitting...</span>
+        <span v-else>Submit Application</span>
+      </button>
+      <button
+        type="button"
+        @click="cancelApplication"
+        class="bg-gray-300 text-gray-700 px-6 py-2 rounded-md shadow-md hover:bg-gray-400 focus:outline-none"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</dialog>
+
   </div>
 </template>
 

@@ -39,7 +39,8 @@ class CompanyDashboardController extends Controller
         $validated = $request->validate([
             'internship_name' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'status' => 'required|in:full-time,part-time',
+            'employment_type' => 'required|string|in:full-time,part-time',
+            'is_open' => 'required|boolean', // Validate the new is_open field
             'salary' => 'required|numeric',
             'about' => 'required|string',
             'requirements' => 'required|string',
@@ -52,31 +53,16 @@ class CompanyDashboardController extends Controller
             'tags' => 'required|string', // Now required
 
         ]);
-    
+        $validated['company_id'] = auth()->user()->company_id;
 
-        $company_id = auth()->user()->company_id; // Adjust to match your relationship and field name
 
-        $imagePath = null;
+
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('internship_images', 'private'); // Save image in storage/app/public/internship_images
+            $validated['image'] = $request->file('image')->store('internship_images', 'public');
+
         }
     // Create the internship with the authenticated company's ID
-    Internship::create([
-        'internship_name' => $validated['internship_name'],
-        'city' => $validated['city'],
-        'status' => $validated['status'],
-        'salary' => $validated['salary'],
-        'about' => $validated['about'],
-        'requirements' => $validated['requirements'],
-        'company_id' => $company_id,
-        'image' => $imagePath, // Store the image path in the database
-        'duration' => $request->duration,
-        'start_date' => $request->start_date,
-        'end_date' => $request->end_date,
-        'benefits' => $request->benefits,
-        'application_deadline' => $request->application_deadline,
-        'tags' => $request->tags,
-    ]);
+    Internship::create($validated);
 
     return redirect()->route('company.internships')->with('success', 'Internship created successfully');
 

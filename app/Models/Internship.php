@@ -24,7 +24,8 @@ class Internship extends Model
     protected $fillable = [
         'internship_name',
         'city',
-        'status',
+        'employment_type',
+        'is_open',
         'salary',
         'about',
         'requirements',

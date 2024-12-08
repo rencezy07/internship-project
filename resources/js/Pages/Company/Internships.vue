@@ -5,11 +5,12 @@ import { useForm } from '@inertiajs/vue3';
 const internshipForm = useForm({
   internship_name: '',
   city: '',
-  status: 'full-time',  // Default to 'full-time'
+  employment_type: 'full-time',  // Default to 'full-time'
   salary: '',
   about: '',
   requirements: '',
   image: 'null',
+  is_open: true,            //new
   duration: '',          // New field for internship duration
   start_date: '',        // New field for start date
   end_date: '',          // New field for end date
@@ -81,14 +82,27 @@ const submitForm = () => {
 
       <!-- Internship Status -->
       <div class="mb-4">
-        <label for="status" class="block text-sm font-medium text-gray-700">Internship Status</label>
+        <label for="employment_type" class="block text-sm font-medium text-gray-700">Employment Type</label>
         <select
-          v-model="internshipForm.status"
-          id="status"
+          v-model="internshipForm.employment_type"
+          id="employment_type"
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         >
           <option value="full-time">Full-Time</option>
           <option value="part-time">Part-Time</option>
+        </select>
+      </div>
+
+      <!-- Is Open -->
+      <div class="mb-4">
+        <label for="is_open" class="block text-sm font-medium text-gray-700">Is Open?</label>
+        <select
+          v-model="internshipForm.is_open"
+          id="is_open"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        >
+          <option :value="true">Yes</option>
+          <option :value="false">No</option>
         </select>
       </div>
 

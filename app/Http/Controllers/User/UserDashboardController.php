@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\InternshipWithCompany;
 
 class UserDashboardController extends Controller
-{
+{   
+
+
     public function index()
     {
         // Get the authenticated user
@@ -18,12 +20,16 @@ class UserDashboardController extends Controller
     
         // Fetch the latest notifications
         $notifications = Notification::where('user_id', $user->id)->get();
+
+        $notificationCount = $notifications->count();
+
     
         // Fetch internships
         $internships = InternshipWithCompany::all();
-    
+
         // Pass the data to Inertia
-        return inertia("User/Dashboard", [
+        return inertia("User/Home", [
+            "notificationCount" => $notificationCount, // Total notification count
             "notifications" => $notifications,
             "internships" => $internships,
             "user" => [
@@ -84,27 +90,39 @@ class UserDashboardController extends Controller
     // Display the list of applications the user has made
     public function showApplications()
     {
+        $user = auth()->user();
+
         $applications = Application::where("user_id", Auth::id())
             ->with("internship") // Eager load the internship details
             ->get();
 
+            $notifications = Notification::where("user_id", $user->id)->get();
+
+            $notificationCount = $notifications->count();
+        
+
         return inertia("User/Application", [
             "applications" => $applications,
-        ]);
+            "notifications" => $notifications,
+        "notificationCount" => $notificationCount, // Total notification count
+
+        ]); 
     }
 
-    public function rejectApplication($internshipId)
-    {
-        $application = Application::where("user_id", auth()->id())
-            ->where("internship_id", $internshipId)
-            ->first();
 
-        if ($application) {
-            $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
-        }
 
-        return redirect()
-            ->back()
-            ->with("success", "Application has been rejected.");
-    }
+    // public function rejectApplication($internshipId)
+    // {
+    //     $application = Application::where("user_id", auth()->id())
+    //         ->where("internship_id", $internshipId)
+    //         ->first();
+
+    //     if ($application) {
+    //         $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
+    //     }
+
+    //     return redirect()
+    //         ->back()
+    //         ->with("success", "Application has been rejected.");
+    // }
 }
