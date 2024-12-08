@@ -19,7 +19,7 @@ class UserDashboardController extends Controller
     {
         // Get the authenticated user
         $user = auth()->user();
-    
+
         // Fetch the latest notifications
         $notifications = Notification::where('user_id', $user->id)->get();
 
@@ -35,8 +35,7 @@ class UserDashboardController extends Controller
             "notifications" => $notifications,
             "internships" => $internships,
             "user" => [
-                "name" => $user->name,
-                "email" => $user->email,
+                "first_name" => $user->first_name,
             ],
         ]);
     }

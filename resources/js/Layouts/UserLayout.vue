@@ -3,7 +3,6 @@ import { Link } from "@inertiajs/vue3"; // Ensure Link is imported
 import { usePage } from "@inertiajs/vue3";
 import { computed, ref } from "vue";
 
-
 const highlightStatus = (message) => {
   // Check for status words and wrap them in a span with the corresponding class
   return message
@@ -13,13 +12,16 @@ const highlightStatus = (message) => {
 };
 
 
+const page = usePage();
 const notificationCount = computed(() => page.props.notificationCount || 0); // Default to 0
 
 
 // Get the user data from the page props (for logged-in user)
-const page = usePage();
 const user = computed(() => page.props.auth.user); // Get the user object
 const notifications = computed(() => page.props.notifications || []); // Get notifications passed from backend
+
+
+
 
 // Create a computed property that reverses the order of notifications
 const sortedNotifications = computed(() => {
@@ -88,7 +90,7 @@ const toggleDropdown = () => {
               @click="toggleDropdown"
               class="text-sm hover:bg-gray-700 px-4 py-2 rounded-lg"
             >
-              {{ user.name }}
+              {{ user.first_name }}
             </button>
 
             <!-- Notifications Dropdown Start -->

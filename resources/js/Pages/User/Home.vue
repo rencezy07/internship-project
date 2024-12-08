@@ -179,7 +179,7 @@ const cancelApplication = () => {
     <!-- User Name -->
     <div class="mb-4">
       <label class="block text-sm font-medium text-gray-700">Your Name</label>
-      <p class="mt-1 text-gray-600">{{ user.name }}</p>
+      <p class="mt-1 text-gray-600">{{ user.first_name }}</p>
     </div>
 
     <!-- User Email -->

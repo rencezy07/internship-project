@@ -19,9 +19,16 @@ class User extends Authenticatable
     protected $table = 'users'; // Explicitly define the table name
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'phone_number',
+        'gender',
+        'university',
+        'college_level',
+        'profile_picture',
+        'dob',
     ];
 
     /**
