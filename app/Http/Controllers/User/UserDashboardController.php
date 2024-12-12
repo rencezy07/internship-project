@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Application;
-use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -14,29 +13,26 @@ class UserDashboardController extends Controller
 
     
 
-
     public function home()
     {
-        // Get the authenticated user
         $user = auth()->user();
-
-        // Fetch the latest notifications
-        $notifications = Notification::where('user_id', $user->id)->get();
-
-        $notificationCount = $notifications->count();
-
     
-        // Fetch internships
-        $internships = InternshipWithCompany::all();
-
-        // Pass the data to Inertia
         return inertia("User/Home", [
-            "notificationCount" => $notificationCount, // Total notification count
-            "notifications" => $notifications,
-            "internships" => $internships,
+            "notificationCount" => $user->unreadNotifications->count(),
+            "notifications" => $user->notifications->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'message' => $notification->data['message'] ?? 'No message available', // Extract the message
+                    'created_at' => $notification->created_at->toDateTimeString(),
+                    'read_at' => $notification->read_at, // Optional: Track read status
+                ];
+            }),
+            "internships" => InternshipWithCompany::all(),
             "user" => [
                 "first_name" => $user->first_name,
-                "profile_image" => $user->profile_image,
+                "profile_picture" => $user->profile_picture,
+                "email" => $user->email, // Add the email field
+
             ],
         ]);
     }
@@ -98,15 +94,13 @@ class UserDashboardController extends Controller
             ->with("internship") // Eager load the internship details
             ->get();
 
-            $notifications = Notification::where("user_id", $user->id)->get();
 
-            $notificationCount = $notifications->count();
         
 
         return inertia("User/Application", [
-            "applications" => $applications,
-            "notifications" => $notifications,
-        "notificationCount" => $notificationCount, // Total notification count
+          "applications" => $applications,
+            "notificationCount" => $user->unreadNotifications->count(),
+            "notifications" => $user->notifications->toArray(),
 
         ]); 
     }

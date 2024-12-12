@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\InternshipApplication;
+use App\Notifications\ApplicationStatusNotification;
 
 class CompanyDashboardController extends Controller
 {
@@ -95,7 +96,9 @@ public function updateApplicationStatus(Request $request, $applicationId)
 
     // Find the application and update the status
     $application = Application::findOrFail($applicationId);
-    $user = $application->user; // Get the user who applied for the internship
+
+    // Retrieve the user who applied for the internship (ensure 'user' is a relationship)
+    $user = $application->user;
 
     // Get the internship and company name
     $internship = $application->internship; // Assuming 'internship' is a relationship on the Application model
@@ -105,7 +108,7 @@ public function updateApplicationStatus(Request $request, $applicationId)
     $application->update(['status' => $request->status]);
 
     // Send a notification to the user based on the status update
-    $this->sendNotificationToUser($user->id, $request->status, $internship->internship_name, $companyName);
+    $this->sendNotificationToUser($user, $request->status, $internship->internship_name, $companyName);
 
     return back()->with([
         'success' => true,
@@ -113,24 +116,11 @@ public function updateApplicationStatus(Request $request, $applicationId)
     ]);
 }
 
-private function sendNotificationToUser($userId, $status, $internshipName, $companyName)
+
+private function sendNotificationToUser($user, $status, $internshipName, $companyName)
 {
-    // Debugging: Check the variables
-
-    // Prepare the message based on the application status
-    $message = $status == 'accepted'
-        ? "Your application for the internship '$internshipName' at '$companyName' has been accepted."
-        : ($status == 'rejected'
-            ? "Your application for the internship '$internshipName' at '$companyName' has been rejected."
-            : "Your application for the internship '$internshipName' at '$companyName' is under review.");
-
-    // Create the notification and save it to the database
-    Notification::create([
-        'user_id' => $userId,
-        'user_type' => 'user', // Targeting the regular user
-        'type' => 'application_status', // Type of notification
-        'message' => $message,
-    ]);
+    // Send notification to the user
+    $user->notify(new ApplicationStatusNotification($status, $internshipName, $companyName));
 }
 
 

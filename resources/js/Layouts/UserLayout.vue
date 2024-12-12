@@ -5,12 +5,18 @@ import { computed, ref } from "vue";
 
 
 const highlightStatus = (message) => {
+  // Ensure message is a valid string
+  if (!message || typeof message !== "string") {
+    return "No message available"; // Fallback message
+  }
+
   // Check for status words and wrap them in a span with the corresponding class
   return message
     .replace(/(rejected)/gi, '<span class="text-red-700 font-bold italic">$1</span>')
     .replace(/(accepted)/gi, '<span class="text-green-700 font-bold italic">$1</span>')
     .replace(/(under review)/gi, '<span class="text-yellow-700 font-bold italic">$1</span>');
 };
+
 
 
 const page = usePage();
@@ -140,11 +146,11 @@ const toggleDropdown = () => {
                     class="px-4 py-3 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 border-b border-gray-300"
                   >
                     <p class="text-sm font-medium">
-                      <span v-html="highlightStatus(notification.message)"></span>
+                      <span v-html="highlightStatus(notification.message || '')"></span>
                     </p>
                     <small class="text-xs text-gray-500">{{
-                                            notification.created_at
-                    }}</small>
+    notification.created_at
+  }}</small>
                   </li>
                 </ul>
               </div>
@@ -173,8 +179,7 @@ const toggleDropdown = () => {
                     My Applications
                   </Link>
                   <Link
-                    :href="route('user.logout')"
-                    method="post"
+                    :href="route('user.profile')"
                     as="button"
                     class="block px-4 py-2 hover:bg-gray-200"
                   >

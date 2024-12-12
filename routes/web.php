@@ -69,6 +69,10 @@ Route::get('/home', function () {
     return Inertia::render('Home');
 })->name('home');
 
+Route::get('/', function () {
+    return Inertia::render('Home');
+})->name('home');
+
 
 // Define a fallback /login route to avoid Route [login] not defined
 Route::get('/login', function () {
@@ -94,6 +98,9 @@ Route::prefix('user')->name('user.')->group(function () {
 
         Route::get('/application', [UserDashboardController::class, 'showApplications'])->name('application');
         Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
+
+        Route::get('/profile', [UserAuthController::class, 'showProfile'])->name('profile');
+    Route::post('/profile', [UserAuthController::class, 'updateProfile'])->name('profile.update');
     });
 });
 
