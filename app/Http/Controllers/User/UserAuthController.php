@@ -149,5 +149,25 @@ public function updateProfile(Request $request)
     return back()->with('success', 'Profile updated successfully!');
 }
 
+public function destroy(Request $request)
+{
+    $user = auth()->user();
+
+    // Validate the current password
+    if (!Hash::check($request->current_password, $user->password)) {
+        return back()->withErrors(['current_password' => 'The password is incorrect.']);
+    }
+
+    // Delete the user
+    $user->delete();
+
+    // Log the user out after deletion
+    auth()->logout();
+
+    // Redirect to the login page or home
+    return redirect()->route('user.login')->with('success', 'Your account has been deleted successfully.');
+}
+
+
 
 }

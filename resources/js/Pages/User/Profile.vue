@@ -1,5 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
   user: Object,
@@ -10,9 +11,9 @@ const form = useForm({
   first_name: props.user?.first_name || '',
   last_name: props.user?.last_name || '',
   email: props.user?.email || '',
-  current_password: '', // To validate the current password
-  new_password: '', // New password field
-  new_password_confirmation: '', // Confirm the new password
+  current_password: '', // Current password for validation
+  new_password: '', // New password field (optional)
+  new_password_confirmation: '', // New password confirmation field
   dob: props.user?.dob || '',
   phone_number: props.user?.phone_number || '',
   gender: props.user?.gender || 'male',
@@ -25,11 +26,47 @@ const handleFileChange = (event) => {
   form.profile_picture = event.target.files[0];
 };
 
+
+
+const deleteAccount = () => {
+  // Check if the current password is provided
+  if (!form.current_password) {
+    alert('Please enter your current password to confirm account deletion.');
+    return;
+  }
+
+  // Confirm the action with the user
+  if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    form.delete(route('user.delete'), {
+      data: { current_password: form.current_password },
+      onSuccess: () => {
+        alert('Your account has been deleted successfully.');
+        // Optionally redirect to login or home page after deletion
+        window.location.href = '/login';  // Or any route you'd like to redirect to
+      },
+      onError: (errors) => {
+        // Handle errors, such as password mismatch or any other issue
+        if (errors.current_password) {
+          alert(errors.current_password[0]); // Show the error message for the password field
+        } else {
+          alert('There was an issue deleting your account. Please try again.');
+        }
+      },
+    });
+  }
+};
+
+
 const submit = () => {
+  if (!form.current_password) {
+    alert('Please enter your current password to update your profile.');
+    return;
+  }
+
   form.post(route('user.profile.update'), {
     onSuccess: () => {
       alert('Profile updated successfully!');
-      // Clear password fields
+      // Clear password fields after success
       form.current_password = '';
       form.new_password = '';
       form.new_password_confirmation = '';
@@ -51,9 +88,6 @@ const submit = () => {
       </div>
       <div v-if="form.errors.current_password" class="text-red-500 text-sm mb-1">
         {{ form.errors.current_password }}
-      </div>
-      <div v-if="form.errors.new_password" class="text-red-500 text-sm mb-1">
-        {{ form.errors.new_password }}
       </div>
 
       <!-- First Name -->
@@ -150,5 +184,19 @@ const submit = () => {
         </button>
       </div>
     </form>
+
+    <!-- Delete Account Section -->
+    <div class="mt-6 bg-red-100 p-4 rounded-md">
+      <h3 class="text-lg font-semibold text-red-700">Delete Account</h3>
+      <p class="text-sm text-red-600">This action cannot be undone. Please confirm your password to delete your account.</p>
+      <div class="text-right mt-4">
+        <button
+          @click="deleteAccount"
+          class="bg-red-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-red-700 focus:outline-none"
+        >
+          Delete Account
+        </button>
+      </div>
+    </div>
   </div>
 </template>

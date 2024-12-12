@@ -101,6 +101,9 @@ Route::prefix('user')->name('user.')->group(function () {
 
         Route::get('/profile', [UserAuthController::class, 'showProfile'])->name('profile');
     Route::post('/profile', [UserAuthController::class, 'updateProfile'])->name('profile.update');
+
+    Route::delete('/delete', [UserAuthController::class, 'destroy'])->name('delete');
+
     });
 });
 
