@@ -26,8 +26,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/company-applications', [AdminDashboardController::class, 'companyApp'])->name('companyapp');
-        Route::put('/company-applications/{company}', [AdminDashboardController::class, 'updateCompanyVerification'])->name('companyapp.update');
-        
+
+        Route::get('/student-internship-applications', [AdminDashboardController::class, 'studentInternshipApplications'])->name('student-internship-applications');
+
+
+        Route::get('/view-users', [AdminDashboardController::class, 'viewUsers'])->name('view-users');
+
+        Route::get('/view-companies', [AdminDashboardController::class, 'viewCompanies'])->name('view-companies');
+
+
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
     });
 });
@@ -57,8 +64,10 @@ Route::prefix('company')->name('company.')->group(function () {
 
         Route::get('/dashboard', [CompanyDashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [CompanyAuthController::class, 'logout'])->name('logout');
+        
 
-         
+        Route::get('/profile', [CompanyDashboardController::class, 'profile'])->name('profile');
+        Route::post('/profile', [CompanyDashboardController::class, 'updateProfile'])->name('profile.update');
         
     });
 });

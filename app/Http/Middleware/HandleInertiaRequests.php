@@ -40,6 +40,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => fn () => $request->user()
                 ? $request->user()->only('id', 'first_name', 'profile_picture')
                 : null,
+
+                'company' => fn () => $request->user() && $request->user() instanceof \App\Models\Company
+                ? $request->user()->only('company_id', 'company_name', 'email', 'company_logo')
+                : null,
             ]
         ]);
     }

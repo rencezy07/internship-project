@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Company;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use App\Models\Company;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyAuthController extends Controller
 {
@@ -16,62 +17,74 @@ class CompanyAuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validate input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
-
-        // Get company by email
-        $company = Company::where('email', $request->email)->first();
-
-        // Check if company exists
-        if (!$company) {
-            return back()->withErrors(['email' => 'Account not found.']);
-        }
-
-        // Check if the company is verified
-        if (!$company->isVerified) {
-            return back()->withErrors(['email' => 'Your account has been processed by the admin, please wait for a while.']);
-        }
-
-        // Attempt to log in if account exists and is verified
-        if (Auth::guard('company')->attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+    
+        if (Auth::guard('company')->attempt($credentials)) {
+            $company = Auth::guard('company')->user();
+    
+            // Check if the company is verified
+            if (!$company->isVerified) {
+                Auth::guard('company')->logout(); // Logout unverified company
+                return redirect()->route('company.login')->withErrors([
+                    'email' => 'Your account is being processed, please wait.',
+                ]);
+            }
+    
+            // Redirect to the dashboard if verified
             return redirect()->route('company.dashboard');
         }
-
-        // If login fails
-        return back()->withErrors(['email' => 'Invalid credentials']);
+    
+        return back()->withErrors([
+            'email' => 'Invalid Credentials',
+        ]);
     }
+    
+    
 
     public function showRegister()
     {
-        return inertia('Company/Register');
+        return inertia('Company/Auth/Register');
     }
 
     public function register(Request $request)
     {
-        $request->validate([
+        // Validate the incoming data
+        $validated = $request->validate([
             'company_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:companies',
+            'email' => 'required|email|unique:company,email',
             'password' => 'required|string|confirmed|min:6',
+            'location' => 'required|string|max:255', // Required location
+            'company_logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Required logo
+            'business_permit' => 'required|mimes:pdf,docx,doc,jpg,png,gif|max:4096', // Required business permit
         ]);
-
-        $company = Company::create([
-            'company_name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'is_verified' => false,
-        ]);
-
-        Auth::guard('company')->login($company);
-
-        return redirect()->route('company.dashboard');
+    
+        // Handle file uploads
+        $logoPath = $request->file('company_logo')->store('company_logos', 'public');
+        $permitPath = $request->file('business_permit')->store('business_permits', 'public');
+    
+        // Add file paths to the validated data
+        $validated['company_logo'] = $logoPath;
+        $validated['business_permit'] = $permitPath;
+        $validated['password'] = bcrypt($request->password); // Encrypt the password
+        $validated['isVerified'] = false; // Set is_verified to false initially
+    
+        // Create the company using the validated data
+        $company = Company::create($validated);
+    
+        // Log the company in after successful registration
+    
+        // Redirect to the company dashboard
+        return redirect()->route('company.login')->with('message', 'Your account is being processed, please wait.');
     }
+    
 
     public function dashboard()
     {
-        return inertia('Company/Dashboard');
+        $company = Auth::guard('company')->user();
+
+        return inertia('Company/Dashboard', [
+            'internships' => $company->internships, // Example: Pass related internships if needed
+        ]);
     }
 
     public function logout()

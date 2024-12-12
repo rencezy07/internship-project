@@ -8,16 +8,16 @@ const form = useForm({
 
 const submit = () => {
   form.post(route('company.login'), {
-    onFinish: () => form.reset('password'),
+    onFinish: () => form.reset('password'), // Clear password field after submit
   });
 };
 </script>
 
 <template>
   <div>
-  loginlayout
     <h1>Company Login</h1>
-    <!-- Display error message -->
+
+    <!-- Display error messages -->
     <div v-if="form.errors.email" class="text-red-500 mb-4">
       <p>{{ form.errors.email }}</p>
     </div>

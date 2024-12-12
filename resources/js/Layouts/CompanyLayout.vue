@@ -14,14 +14,30 @@ const company = computed(() => page.props.auth.user);  // Check if the user is a
       <div class="p-4 text-lg font-bold border-b border-gray-700">Company Panels</div>
       <nav class="flex-grow">
         <ul>
-          <li class="p-4 hover:bg-gray-700">
-            <a href="/company/dashboard" class="block hover:bg-gray-700">Dashboard</a>
+          <li>
+
+          <Link
+              :href="route('company.dashboard')"
+              class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+            >
+              Dashboard
+            </Link>
           </li>
-          <li class="p-4 hover:bg-gray-700">
-            <a href="/company/internships" class="block hover:bg-gray-700">Add Internships</a>
+        <li>
+            <Link
+              :href="route('company.internships')"
+              class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+            >
+              Internship
+            </Link>
           </li>
-          <li class="p-4 hover:bg-gray-700">
-            <a href="/company/manage-internships" class="block hover:bg-gray-700">Manage Applicants</a>
+        <li>
+            <Link
+              :href="route('company.company.manageInternships')"
+              class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+            >
+              Manage Intenrships
+            </Link>
           </li>
           <li class="p-4 hover:bg-gray-700">
             <Link

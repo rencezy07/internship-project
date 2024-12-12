@@ -8,6 +8,7 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\InternshipApplication;
 use App\Notifications\ApplicationStatusNotification;
 
@@ -122,6 +123,66 @@ private function sendNotificationToUser($user, $status, $internshipName, $compan
     // Send notification to the user
     $user->notify(new ApplicationStatusNotification($status, $internshipName, $companyName));
 }
+
+
+public function profile()
+{
+    $company = Auth::guard('company')->user();
+
+    return inertia('Company/Profile', [
+        'company' => $company->only('company_id', 'company_name', 'email', 'location', 'company_logo', 'business_permit'),
+    ]);
+}
+
+
+
+
+public function updateProfile(Request $request)
+{
+    $company = Auth::guard('company')->user();
+
+    // Validate the request
+    $validated = $request->validate([
+        'company_name' => 'required|string|max:255',
+        'email' => 'required|email|unique:company,email,' . $company->company_id . ',company_id', // Unique validation for the company table
+        'location' => 'required|string|max:255',
+        'company_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Optional file upload
+        'business_permit' => 'nullable|mimes:pdf|max:4096', // Optional PDF upload
+        'password' => 'required|string', // Current password is required
+        'new_password' => 'nullable|string|min:8|same:confirm_password', // Optional password change
+    ]);
+
+    // Verify the current password
+    if (!Hash::check($validated['password'], $company->password)) {
+        return back()->withErrors(['password' => 'The provided password is incorrect.']);
+    }
+
+    // Handle file uploads
+    if ($request->hasFile('company_logo')) {
+        $validated['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
+    }
+
+    if ($request->hasFile('business_permit')) {
+        $validated['business_permit'] = $request->file('business_permit')->store('business_permits', 'public');
+    }
+
+    // Update the password if a new password is provided
+    if (!empty($validated['new_password'])) {
+        $company->password = bcrypt($validated['new_password']);
+    }
+
+    // Update the company's details
+    $company->update([
+        'company_name' => $validated['company_name'],
+        'email' => $validated['email'],
+        'location' => $validated['location'],
+        'company_logo' => $validated['company_logo'] ?? $company->company_logo,
+        'business_permit' => $validated['business_permit'] ?? $company->business_permit,
+    ]);
+
+    return redirect()->route('company.profile')->with('success', 'Profile updated successfully.');
+}
+
 
 
 

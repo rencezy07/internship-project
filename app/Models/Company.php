@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -19,10 +18,15 @@ class Company extends Authenticatable
     protected $table = 'company'; // Explicitly define the table name
     protected $primaryKey = 'company_id';
 
+    // Add the new fields to the $fillable array
     protected $fillable = [
         'company_name',
         'email',
         'password',
+        'location',          // Added location
+        'company_logo',      // Added company_logo
+        'business_permit',   // Added business_permit
+        'isVerified',       // Make sure 'is_verified' is also fillable
     ];
 
     /**
@@ -35,11 +39,13 @@ class Company extends Authenticatable
         'remember_token',
     ];
 
-    // Company Model
-public function internships()
-{
-    return $this->hasMany(Internship::class);
-}
+    /**
+     * Get the internships for the company.
+     */
+    public function internships()
+    {
+        return $this->hasMany(Internship::class);
+    }
 
     /**
      * Get the attributes that should be cast.
