@@ -41,6 +41,11 @@ const submit = () => {
     <div class="w-full sm:w-1/2 bg-blue-50 p-8 flex flex-col justify-center">
       <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Login</h1>
       <form @submit.prevent="submit" class="space-y-4">
+        <div v-if="form.errors.email" class="text-red-500 text-sm">
+        {{ form.errors.email }}
+      </div>
+        <div>
+
         <input
           v-model="form.email"
           type="email"
@@ -48,7 +53,15 @@ const submit = () => {
           placeholder="Email"
           required
           class="w-full p-3 border border-gray-300 rounded-md"
+          :class="{ 'border-red-500': form.errors.email }"
+
         />
+
+  
+      </div>
+
+      <div>
+
         <input
           v-model="form.password"
           type="password"
@@ -56,7 +69,12 @@ const submit = () => {
           placeholder="Password"
           required
           class="w-full p-3 border border-gray-300 rounded-md"
+          :class="{ 'border-red-500': form.errors.email }"
+
         />
+     
+      </div>
+
         <label class="flex items-center space-x-2">
           <input type="checkbox" v-model="form.remember" />
           <span class="text-sm text-gray-600">Remember Me</span>

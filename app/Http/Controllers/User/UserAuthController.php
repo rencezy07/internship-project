@@ -33,7 +33,7 @@ class UserAuthController extends Controller
             return redirect()->route('user.home');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials']);
+        return back()->withErrors(['email' => 'Invalid Credentials']);
     }
 
    
@@ -41,6 +41,17 @@ class UserAuthController extends Controller
         return inertia('User/Auth/Register');
     }
     public function Register(Request $request) {
+
+        $existingUser = User::where('email', $request->email)->exists();
+       
+        if ($existingUser) {
+            return back()->withErrors([
+                'email' => 'An account with this email already exists.',
+            ]);
+        }
+        
+
+        
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',

@@ -69,6 +69,9 @@ const handleFileChange = (e) => {
           autocomplete="email"
 
         />
+        <div v-if="form.errors.email" class="text-red-500 text-sm">
+    {{ form.errors.email }}
+  </div>
       </div>
 
       <!-- Password -->
