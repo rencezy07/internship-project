@@ -3,6 +3,7 @@ import { Link } from "@inertiajs/vue3"; // Ensure Link is imported
 import { usePage } from "@inertiajs/vue3";
 import { computed, ref } from "vue";
 
+
 const highlightStatus = (message) => {
   // Check for status words and wrap them in a span with the corresponding class
   return message
@@ -52,25 +53,45 @@ const toggleDropdown = () => {
     <nav class="bg-gray-800 text-white p-4 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <!-- Logo or Title -->
-        <div class="text-lg font-bold">Home</div>
-
+        <Link v-if="user"
+            :href="route('user.home')"
+            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+          >
+            Home
+          </Link>
+        <Link v-else
+            :href="route('home')"
+            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+          >
+            Balay sa homers
+          </Link>
+       
         <!-- Navbar links -->
         <div class="flex space-x-4">
           <!-- Show Dashboard link if logged in, otherwise show Login link -->
           <p v-if="user"></p>
-          <Link
-            v-else
+          <div v-else>
+            <Link
             :href="route('login')"
             class="hover:bg-gray-700 px-4 py-2 rounded-lg"
           >
             Login
           </Link>
+            <Link
+            :href="route('user.register')"
+            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+          >
+            Sign Up
+          </Link>
+          </div>
+       
         </div>
 
         <!-- User's name or Logout if logged in -->
         <div class="flex items-center space-x-4">
           <!-- Display user's name if logged in, and add a dropdown when clicked -->
-          <div v-if="user" class="relative">
+          <div v-if="user" class="relative flex">
+      
             <!-- Notifications Icon Button Start -->
             <button @click="toggleNotifications" class="relative">
               <span class="text-white px-4 py-2 rounded-lg relative">
@@ -92,6 +113,7 @@ const toggleDropdown = () => {
             >
               {{ user.first_name }}
             </button>
+            <img style="width: 30px; height: 30px;" :src="`/storage/${user.profile_picture}`" alt="Internship Image">
 
             <!-- Notifications Dropdown Start -->
             <div
@@ -193,8 +215,10 @@ const toggleDropdown = () => {
       <!-- Slot for main content -->
       <slot />
       <!--  user dashboard -->
+
     </main>
   </div>
+
 </template>
 
 <style scoped>

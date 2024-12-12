@@ -50,9 +50,12 @@ const reloadInternships = () => {
         <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4">
           <div>
             <h4 class="text-sm font-semibold text-gray-800">
-              Applicant: {{ internship.applicant_name }}
+              Applicant: {{ internship.first_name }}
             </h4>
+            <img style="width: 30px; height: 30px;" :src="`/storage/${internship.profile_picture}`" alt="Internship Image">
           </div>
+
+
 
           <p v-if="internship.resume" class="text-sm text-blue-600">
   <a

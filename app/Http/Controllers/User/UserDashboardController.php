@@ -36,6 +36,7 @@ class UserDashboardController extends Controller
             "internships" => $internships,
             "user" => [
                 "first_name" => $user->first_name,
+                "profile_image" => $user->profile_image,
             ],
         ]);
     }

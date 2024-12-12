@@ -13,11 +13,13 @@ class UserAuthController extends Controller
 {
     public function showLogin()
     {
-        $internships = InternshipWithCompany::select('internship_name', 'company_name', 'city', 'employment_type', 'is_open')->get();// Adjust this to your model and data as needed
-        return inertia('User/Auth/Login', [
-            'internships' => $internships, // Send internships to the frontend
+        // $internships = InternshipWithCompany::select('internship_name', 'company_name', 'city', 'employment_type', 'is_open')->get();// Adjust this to your model and data as needed
+        // return inertia('User/Auth/Login', [
+        //     'internships' => $internships, // Send internships to the frontend
 
-        ]);
+        // ]);
+
+            return inertia('User/Auth/Login');
 
     }
 
@@ -60,7 +62,7 @@ class UserAuthController extends Controller
 
         $user = User::create($validated);
 
-        auth()->login($user);
+        auth('user')->login($user);
 
         // Redirect to the home page after registration
         return redirect()->route('user.home');

@@ -10,11 +10,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    server: {
-        host: '192.168.8.109', // Replace with your laptop's local IP
-        port: 5173,            // Default Vite port
-        hmr: {
-            host: '192.168.8.109', // Ensure hot module replacement uses the correct host
-        },
-    },
+    // server: {
+    //     host: '192.168.8.109', // Replace with your laptop's local IP
+    //     port: 5173,            // Default Vite port
+    //     hmr: {
+    //         host: '192.168.8.109', // Ensure hot module replacement uses the correct host
+    //     },
+    // },
 });

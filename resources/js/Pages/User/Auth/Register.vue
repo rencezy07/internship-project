@@ -66,6 +66,8 @@ const handleFileChange = (e) => {
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter your email"
           required
+          autocomplete="email"
+
         />
       </div>
 
@@ -79,6 +81,8 @@ const handleFileChange = (e) => {
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter your password"
           required
+          autocomplete="new-password"
+
         />
       </div>
 
@@ -92,6 +96,8 @@ const handleFileChange = (e) => {
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Confirm your password"
           required
+          autocomplete="new-password"
+
         />
       </div>
 

@@ -17,7 +17,6 @@ const submit = () => {
   <div>
   loginlayout
     <h1>Company Login</h1>
-
     <!-- Display error message -->
     <div v-if="form.errors.email" class="text-red-500 mb-4">
       <p>{{ form.errors.email }}</p>

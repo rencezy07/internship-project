@@ -65,10 +65,8 @@ Route::prefix('company')->name('company.')->group(function () {
 
 
 
-
-
-Route::get('/', function () {
-    return redirect()->route('user.login');
+Route::get('/home', function () {
+    return Inertia::render('Home');
 })->name('home');
 
 
