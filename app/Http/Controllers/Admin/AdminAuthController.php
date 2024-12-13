@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\InternshipApplication;
 
 class AdminAuthController extends Controller
 {
@@ -30,15 +32,6 @@ class AdminAuthController extends Controller
 
         return back()->withErrors(['email' => 'Invalid credentials']);
     }
-
-    public function dashboard()
-    {
-        $companies = Company::where('is_verified', false)->get(); // Fetch unverified companies
-        return inertia('Admin/Dashboard', [
-            'unverifiedCompanies' => $companies,
-        ]);
-    }
-
 
     public function destroy(Request $request)
     {

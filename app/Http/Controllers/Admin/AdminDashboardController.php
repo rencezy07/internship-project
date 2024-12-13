@@ -15,7 +15,25 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        return inertia('Admin/Dashboard');
+        $totalUsers = User::count(); // Total users
+        $totalCompanies = Company::count(); // Total companies
+        $totalApplications = InternshipApplication::count(); // Total applications
+        $verifiedCompanies = Company::where('isVerified', true)->count(); // Verified companies
+        $underReviewApplications = InternshipApplication::where('application_status', 'under review')->count(); // Applications under review
+    
+        // Fetch the most recent users and companies
+        $recentUsers = User::orderBy('created_at', 'desc')->take(5)->get();
+        $recentCompanies = Company::orderBy('created_at', 'desc')->take(5)->get();
+    
+        return inertia('Admin/Dashboard', [
+            'totalUsers' => $totalUsers,
+            'totalCompanies' => $totalCompanies,
+            'totalApplications' => $totalApplications,
+            'verifiedCompanies' => $verifiedCompanies,
+            'underReviewApplications' => $underReviewApplications,
+            'recentUsers' => $recentUsers,
+            'recentCompanies' => $recentCompanies,
+        ]);
     }
 
     public function companyApp()
