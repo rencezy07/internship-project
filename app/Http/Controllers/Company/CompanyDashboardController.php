@@ -74,7 +74,7 @@ class CompanyDashboardController extends Controller
 
     // user under review ---------------------------
 
-    public function manageInternships()
+    public function manageInternshipsApplication()
 {
     // Get all the internships for the logged-in company
     $companyId = Auth::guard('company')->id();
@@ -82,7 +82,7 @@ class CompanyDashboardController extends Controller
     $internships = InternshipApplication::where('company_id', $companyId)
     ->get();
     // Pass internships and applications to the view via Inertia
-    return inertia('Company/ManageInternships', [
+    return inertia('Company/ManageInternshipsApplication', [
         'internships' => $internships,
     ]);
 }
@@ -186,9 +186,60 @@ public function updateProfile(Request $request)
 
 
 
-    
+public function manageAllInternships()
+{
+    // Fetch internships for the logged-in company
+    $companyId = Auth::guard('company')->id();
+    $internships = Internship::where('company_id', $companyId)->get();
+
+    return inertia('Company/ManageInternships', [
+        'internships' => $internships,
+    ]);
+}
+
 
     
+public function manageInternships()
+{
+    $companyId = Auth::guard('company')->id();
+    $internships = Internship::where('company_id', $companyId)->get();
+
+    // Ensure the component you're trying to load exists and is correctly named
+    return inertia('Company/ManageInternships', [
+        'internships' => $internships,
+    ]);
+}
+
+
+
+public function updateInternship(Request $request, $internshipId)
+{
+    $validated = $request->validate([
+        'internship_name' => 'required|string|max:255',
+        'city' => 'required|string|max:255',
+        'salary' => 'required|numeric',
+        'is_open' => 'required|boolean',
+        // Add other validation rules as needed
+    ]);
+
+    $internship = Internship::findOrFail($internshipId);
+    $internship->update($validated);
+
+    return back()->with('success', 'Internship updated successfully.');
+
+}
+
+
+
+public function deleteInternship($internshipId)
+{
+    // Find and delete the internship
+    $internship = Internship::findOrFail($internshipId);
+    $internship->delete();
+
+    return back()->with('success', 'Internship Deleted Successfully.');
+
+}
 
 
 

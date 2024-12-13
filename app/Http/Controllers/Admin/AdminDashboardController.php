@@ -6,7 +6,9 @@ use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\InternshipApplication;
 
 class AdminDashboardController extends Controller
@@ -23,33 +25,50 @@ class AdminDashboardController extends Controller
         return inertia('Admin/CompanyApp', ['companies' => $companies]);
         
     }
-    public function updateCompanyVerification(Request $request, Company $company)
-    {
-        $request->validate([
-            'isVerified' => 'required|boolean', // Validate the input as boolean
-        ]);
-    
-        $company->isVerified = $request->isVerified; // Update the isVerified field
-        $company->save(); // Save the changes to the database
-    return back()->with([
-    'success' => 'Company verification status updated successfully.',
-    'isVerified' => $company->isVerified,
-]);
-    }
-    public function viewUsers()
-    {
-        $users = User::select('id', 'first_name', 'last_name', 'email', 'profile_picture')->get();
-    
+
+    public function updateCompanyVerification(Request $request, $company_id)
+{
+    $company = Company::where('company_id', $company_id)->firstOrFail();
+
+    $request->validate([
+        'isVerified' => 'required|boolean',
+    ]);
+
+    $company->isVerified = $request->isVerified;
+    $company->save();
+ // Check if the status is "Rejected" (isVerified = false)
+ if (!$request->isVerified && Auth::guard('company')->id() == $company->company_id) {
+    Auth::guard('company')->logout(); // Log out the company user
+    session()->invalidate(); // Invalidate the session
+        session()->regenerateToken(); // Regenerate the session token
+}
+
+return back()->with('success', 'Company verification status updated successfully.');
+}
+
+public function viewUsers()
+{
+    // Fetch users and calculate total applications for each user using the scalar function
+    $users = User::select('id', 'first_name', 'last_name', 'email', 'profile_picture')->get();
+
+    // Add the total applications for each user
+    foreach ($users as $user) {
         // Prepend the storage path to the profile_picture
-        foreach ($users as $user) {
-            $user->profile_picture = $user->profile_picture
-                ? asset('storage/' . $user->profile_picture)
-                : null;
-        }
-    
-        return inertia('Admin/DisplayUsers', ['users' => $users]);
+        $user->profile_picture = $user->profile_picture
+            ? asset('storage/' . $user->profile_picture)
+            : null;
+
+        // Call the scalar function total_applications with the user's id
+        $totalApplications = DB::select('SELECT total_applications(?)', [$user->id]);
+
+        // Add total applications to the user object
+        $user->total_applications = $totalApplications[0]->total_applications ?? 0;  // Default to 0 if null
     }
-    
+
+    // Pass the data to the Inertia component
+    return inertia('Admin/DisplayUsers', ['users' => $users]);
+}
+
     
 
     public function viewCompanies()
@@ -67,17 +86,21 @@ class AdminDashboardController extends Controller
 }
 
 
-public function studentInternshipApplications()
+public function studentInternshipApplications($id = null)
 {
-    $applications = InternshipApplication::all();
+    if ($id) {
+        // If an id is provided, fetch applications for a specific student
+        $applications = DB::select('SELECT * FROM get_student_applications(?)', [$id]);
+    } else {
+        // If no id is provided, fetch all internship applications for all students
+        $applications = DB::select('SELECT * FROM get_all_internship_applications()');
+    }
 
-    // Pass data to the frontend
+    // Pass the applications data to the Inertia component
     return inertia('Admin/StudentInternshipApplications', [
         'applications' => $applications,
     ]);
 }
-
-
 
 
 

@@ -27,7 +27,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/company-applications', [AdminDashboardController::class, 'companyApp'])->name('companyapp');
 
-        Route::get('/student-internship-applications', [AdminDashboardController::class, 'studentInternshipApplications'])->name('student-internship-applications');
+        Route::put('/company-applications/{company_id}', [AdminDashboardController::class, 'updateCompanyVerification'])->name('companyapp.update');
+
+
+        Route::get('/student-internship-applications/{id?}', [AdminDashboardController::class, 'studentInternshipApplications'])->name('student-internship-applications');
 
 
         Route::get('/view-users', [AdminDashboardController::class, 'viewUsers'])->name('view-users');
@@ -55,7 +58,9 @@ Route::prefix('company')->name('company.')->group(function () {
         Route::post('/internships', [CompanyDashboardController::class, 'storeInternship'])->name('internship.store');
 
 
-        Route::get('/manage-internships', [CompanyDashboardController::class, 'manageInternships'])->name('company.manageInternships');
+        Route::get('/manage-internships-application', [CompanyDashboardController::class, 'manageInternshipsApplication'])->name('manage-internships-application');
+
+
         Route::put('/application/{applicationId}/status', [CompanyDashboardController::class, 'updateApplicationStatus'])
         ->name('company.updateApplicationStatus');
         Route::get('/download/{type}/{internshipId}', [FileController::class, 'download'])
@@ -68,7 +73,14 @@ Route::prefix('company')->name('company.')->group(function () {
 
         Route::get('/profile', [CompanyDashboardController::class, 'profile'])->name('profile');
         Route::post('/profile', [CompanyDashboardController::class, 'updateProfile'])->name('profile.update');
-        
+
+
+        Route::get('/manage-internships', [CompanyDashboardController::class, 'manageInternships'])->name('manageInternships');
+
+        Route::put('/update/{internshipId}', [CompanyDashboardController::class, 'updateInternship'])->name('update');
+        Route::delete('/delete/{internshipId}', [CompanyDashboardController::class, 'deleteInternship'])->name('delete');
+
+
     });
 });
 

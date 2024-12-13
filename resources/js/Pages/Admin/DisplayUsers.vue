@@ -1,19 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps({
   users: {
     type: Array,
-    default: () => [], // Ensure users is always an array
+    default: () => [],  // Default to an empty array if no users data
   },
 });
-
-// Safely log the users data
-if (props.users && Array.isArray(props.users)) {
-  console.log("Users data:", props.users);
-} else {
-  console.log("Users prop is missing or invalid.");
-}
 </script>
 
 <template>
@@ -26,11 +19,13 @@ if (props.users && Array.isArray(props.users)) {
           <th class="p-3">First Name</th>
           <th class="p-3">Last Name</th>
           <th class="p-3">Email</th>
+          <th class="p-3">Total Applications</th> <!-- Column for total applications -->
         </tr>
       </thead>
       <tbody>
         <tr v-for="user in users" :key="user.id" class="border-t">
           <td class="p-3">
+            <!-- Show profile picture, or placeholder if missing -->
             <img
               :src="user.profile_picture || 'https://via.placeholder.com/50'"
               alt="Profile Picture"
@@ -40,6 +35,7 @@ if (props.users && Array.isArray(props.users)) {
           <td class="p-3">{{ user.first_name }}</td>
           <td class="p-3">{{ user.last_name }}</td>
           <td class="p-3">{{ user.email }}</td>
+          <td class="p-3">{{ user.total_applications }}</td> <!-- Display total applications -->
         </tr>
       </tbody>
     </table>

@@ -3,6 +3,8 @@ import { usePage } from '@inertiajs/vue3';
 import ApprovalStatusDropdown from '@/Components/ApprovalStatusDropdown.vue';
 
 const { companies } = usePage().props; // Fetch companies from props
+console.log('Companies:', companies);
+
 </script>
 
 <template>
