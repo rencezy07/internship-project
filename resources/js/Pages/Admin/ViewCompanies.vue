@@ -13,6 +13,8 @@ const props = defineProps({
           <th class="p-3">Company Logo</th>
           <th class="p-3">Company Name</th>
           <th class="p-3">Email</th>
+          <th class="p-3">Total Internships</th>
+
         </tr>
       </thead>
       <tbody>
@@ -26,6 +28,9 @@ const props = defineProps({
           </td>
           <td class="p-3">{{ company.company_name }}</td>
           <td class="p-3">{{ company.email }}</td>
+          <td class="p-3">
+            {{ company.total_internships > 0 ? company.total_internships : 0 }}
+          </td>
         </tr>
       </tbody>
     </table>

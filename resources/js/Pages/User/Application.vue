@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 
 // Get the applications from the page props
-const { applications } = usePage().props;
+const { applications, applicationSummary } = usePage().props;
 
 // Reactive variable for the selected filter
 const selectedFilter = ref('all');
@@ -21,6 +21,7 @@ const filteredApplications = computed(() => {
   <div>
     <h1 class="text-2xl font-semibold mb-6">My Applications</h1>
 
+
     <!-- Filter Dropdown -->
     <div class="mb-6">
       <label for="filter" class="block text-sm font-medium text-gray-700 mb-2">
@@ -36,6 +37,26 @@ const filteredApplications = computed(() => {
         <option value="accepted">Accepted</option>
         <option value="rejected">Rejected</option>
       </select>
+    </div>
+
+     <!-- Summary Statistics -->
+     <div v-if="applicationSummary.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white p-4 rounded shadow text-center">
+        <h3 class="text-sm font-semibold text-gray-500">Total Applications</h3>
+        <p class="text-xl font-bold text-blue-500">{{ applicationSummary[0].total_applications }}</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow text-center">
+        <h3 class="text-sm font-semibold text-gray-500">Under Review</h3>
+        <p class="text-xl font-bold text-yellow-500">{{ applicationSummary[0].under_review_count }}</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow text-center">
+        <h3 class="text-sm font-semibold text-gray-500">Accepted</h3>
+        <p class="text-xl font-bold text-green-500">{{ applicationSummary[0].accepted_count }}</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow text-center">
+        <h3 class="text-sm font-semibold text-gray-500">Rejected</h3>
+        <p class="text-xl font-bold text-red-500">{{ applicationSummary[0].rejected_count }}</p>
+      </div>
     </div>
 
     <!-- Displaying applications -->

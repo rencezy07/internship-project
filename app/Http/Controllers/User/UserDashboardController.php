@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\InternshipWithCompany;
+use App\Models\UserApplicationSummary;
 
 class UserDashboardController extends Controller
 {   
@@ -89,22 +90,23 @@ class UserDashboardController extends Controller
     public function showApplications()
     {
         $user = auth()->user();
-
-        $applications = Application::where("user_id", Auth::id())
+    
+        // Retrieve detailed applications with internship details
+        $applications = Application::where("user_id", $user->id)
             ->with("internship") // Eager load the internship details
             ->get();
-
-
-        
-
+    
+        // Use the Eloquent model to query the summary view
+        $applicationSummary = UserApplicationSummary::where('user_id', $user->id)->get();
+    
         return inertia("User/Application", [
-          "applications" => $applications,
+            "applications" => $applications,
             "notificationCount" => $user->unreadNotifications->count(),
             "notifications" => $user->notifications->toArray(),
-
-        ]); 
+            "applicationSummary" => $applicationSummary,
+        ]);
     }
-
+    
 
 
     // public function rejectApplication($internshipId)

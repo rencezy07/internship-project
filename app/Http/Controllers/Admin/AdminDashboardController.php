@@ -93,12 +93,17 @@ public function viewUsers()
 {
     $companies = Company::select('company_id', 'company_logo', 'company_name', 'email')->get();
 
+    
     // Prepend the storage path to the company_logo field
     foreach ($companies as $company) {
         $company->company_logo = $company->company_logo
             ? asset('storage/' . $company->company_logo)
             : null;
     }
+
+    $totalInternships = DB::select('SELECT total_internships_by_company(?) AS total', [$company->company_id]);
+    $company->total_internships = $totalInternships[0]->total ?? 0; // Default to 0 if null
+
 
     return inertia('Admin/ViewCompanies', ['companies' => $companies]);
 }

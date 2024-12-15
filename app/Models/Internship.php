@@ -41,7 +41,7 @@ class Internship extends Model
 
     public function applications()
     {
-        return $this->hasMany(Application::class);
+        return $this->hasMany(Application::class, 'internship_id');  // An internship has many applications
     }
     // Define relationships if necessary
     public function company()
