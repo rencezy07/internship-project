@@ -28,8 +28,6 @@ const user = computed(() => page.props.auth.user); // Get the user object
 const notifications = computed(() => page.props.notifications || []); // Get notifications passed from backend
 
 
-
-
 // Create a computed property that reverses the order of notifications
 const sortedNotifications = computed(() => {
   return [...notifications.value].reverse(); // Spread operator to avoid mutation
@@ -55,165 +53,167 @@ const toggleDropdown = () => {
 
 <template>
   <div>
-    <!-- Navbar -->
-    <nav class="bg-gray-800 text-white p-4 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <!-- Logo or Title -->
-        <Link v-if="user"
-            :href="route('user.home')"
-            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
+
+
+<!-- Navbar -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+    <!-- Logo and Title -->
+    <div class="flex items-center space-x-3">
+      <!-- Logo -->
+      <Link :href="route('home')">
+        <img
+          src="/public/images/internship-logo.png"
+          alt="Logo"
+          class="h-12 w-15 object-cover"
+        />
+      </Link>
+
+      <!-- Title -->
+      <!-- <Link
+        v-if="user"
+        :href="route('user.home')"
+        class="text-2xl font-extrabold text-[#00FFAB] hover:text-[#00E6A0] transition duration-300"
+      >
+        Home
+      </Link>
+      <Link
+        v-else
+        :href="route('home')"
+        class="text-2xl font-extrabold text-[#00FFAB] hover:text-[#00E6A0] transition duration-300"
+      >
+        Balay sa Homers
+      </Link> -->
+    </div>
+
+    <!-- Navbar Links -->
+    <div class="flex items-center space-x-6">
+      <!-- Login/Sign Up Links -->
+      <div v-if="!user" class="flex space-x-4">
+        <Link
+          :href="route('login')"
+          class="text-gray-700 hover:text-[#00FFAB] font-semibold transition duration-300"
+        >
+          Login
+        </Link>
+        <Link
+          :href="route('user.register')"
+          class="text-gray-700 hover:text-[#00FFAB] font-semibold transition duration-300"
+        >
+          Sign Up
+        </Link>
+      </div>
+
+      <!-- Notifications and User Dropdown -->
+      <div v-else class="flex items-center space-x-6 relative">
+        <!-- Notifications Icon -->
+        <button @click="toggleNotifications" class="relative focus:outline-none">
+          <i class="fas fa-bell text-gray-600 hover:text-[#00FFAB] text-xl"></i>
+          <!-- Notification Count -->
+          <span
+            v-if="notificationCount > 0"
+            class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"
           >
-            Home
-          </Link>
-        <Link v-else
-            :href="route('home')"
-            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
-          >
-            Balay sa homers
-          </Link>
-       
-        <!-- Navbar links -->
-        <div class="flex space-x-4">
-          <!-- Show Dashboard link if logged in, otherwise show Login link -->
-          <p v-if="user"></p>
-          <div v-else>
-            <Link
-            :href="route('login')"
-            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
-          >
-            Login
-          </Link>
-            <Link
-            :href="route('user.register')"
-            class="hover:bg-gray-700 px-4 py-2 rounded-lg"
-          >
-            Sign Up
-          </Link>
+            {{ notificationCount }}
+          </span>
+        </button>
+
+        <!-- Notifications Dropdown -->
+        <div
+          v-if="isNotificationsOpen"
+          class="absolute right-0 top-12 bg-white shadow-lg rounded-lg w-64 max-h-64 overflow-y-auto z-50"
+        >
+          <div class="p-4">
+            <h3 class="text-gray-800 font-bold mb-2">Notifications</h3>
+            <ul class="space-y-2">
+              <li
+                v-if="notifications.length === 0"
+                class="text-sm text-gray-500 text-center"
+              >
+                No messages yet.
+              </li>
+              <li
+                v-for="notification in sortedNotifications"
+                :key="notification.id"
+                class="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-200"
+              >
+                <p class="text-sm text-gray-700 font-medium">
+                  <span v-html="highlightStatus(notification.message)"></span>
+                </p>
+                <small class="text-xs text-gray-400">
+                  {{ notification.created_at }}
+                </small>
+              </li>
+            </ul>
           </div>
-       
         </div>
 
-        <!-- User's name or Logout if logged in -->
-        <div class="flex items-center space-x-4">
-          <!-- Display user's name if logged in, and add a dropdown when clicked -->
-          <div v-if="user" class="relative flex">
-      
-            <!-- Notifications Icon Button Start -->
-            <button @click="toggleNotifications" class="relative">
-              <span class="text-white px-4 py-2 rounded-lg relative">
-                <!-- Notification Bell Icon -->
-                <i class="fa fa-bell"></i>
-              </span>
-              <span
-      v-if="notificationCount > 0"
-      class="absolute -top-1 right-1.5 bg-red-500 text-white font-bold rounded-full h-4 w-4 flex items-center justify-center"
-      style="font-size: 9px;"
-    >
-      {{ notificationCount }}
-    </span>
-            </button>
-            <!-- Notifications Icon Button End -->
-            <button
-              @click="toggleDropdown"
-              class="text-sm hover:bg-gray-700 px-4 py-2 rounded-lg"
-            >
-              {{ user.first_name }}
-            </button>
-            <img style="width: 30px; height: 30px;" :src="`/storage/${user.profile_picture}`" alt="Internship Image">
+        <!-- User Dropdown -->
+        <div class="flex items-center space-x-2 cursor-pointer relative">
+          <!-- User Profile Image -->
+          <img
+            :src="`/storage/${user.profile_picture}`"
+            alt="User Profile"
+            class="h-10 w-10 rounded-full border-2 border-[#00FFAB]"
+          />
 
-            <!-- Notifications Dropdown Start -->
-            <div
-              v-if="isNotificationsOpen"
-              class="absolute top-16 right-4 bg-white text-black shadow-lg mt-2 rounded-lg w-64 max-h-64  notifications-dropdown"
-            >
-              <div class="p-4">
-                <!-- Check if there are notifications -->
-                <div class="font-semibold text-lg mb-2">Notifications</div>
-                <div class="overflow-y-auto max-h-48">
+          <!-- Dropdown Toggle -->
+          <button
+            @click="toggleDropdown"
+            class="text-gray-700 font-semibold hover:text-[#00FFAB] transition duration-300"
+          >
+            {{ user.first_name }}
+          </button>
 
-                <ul class="space-y-2">
-                  <!-- If no notifications -->
-                  <li
-                    v-if="notifications.length === 0"
-                    class="px-4 py-2 text-gray-500 border-b border-gray-300"
-                  >
-                    No messages yet
-                  </li>
-                  <!-- If there are notifications -->
-                  <li
-                    v-for="notification in sortedNotifications"
-                    :key="notification.id"
-                    class="px-4 py-3 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 border-b border-gray-300"
-                  >
-                    <p class="text-sm font-medium">
-                      <span v-html="highlightStatus(notification.message || '')"></span>
-                    </p>
-                    <small class="text-xs text-gray-500">{{
-    notification.created_at
-  }}</small>
-                  </li>
-                </ul>
-              </div>
-
-              </div>
-            </div>
-            <!-- Notifications Dropdown End -->
-
-            <!-- Dropdown Menu -->
-            <div
-              v-if="isDropdownOpen"
-              class="absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-lg shadow-lg"
-            >
-              <ul>
-                <li>
-                  <Link
-                    :href="route('user.home')"
-                    class="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    :href="route('user.application')"
-                    class="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    My Applications
-                  </Link>
-                  <Link
-                    :href="route('user.profile')"
-                    as="button"
-                    class="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    My Profile
-                  </Link>
-                  <Link
-                    :href="route('user.logout')"
-                    method="post"
-                    as="button"
-                    class="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    Logout
-                  </Link>
-                </li>
-
-                <!-- Settings link -->
-                <!-- <li>
-                  <Link
-                    :href="route('user.settings')"
-                    class="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    Settings
-                  </Link>
-                </li> -->
-                <!-- Logout link -->
-                <!-- <li>
-                
-                </li> -->
-              </ul>
-            </div>
+          <!-- Dropdown Menu -->
+          <div
+            v-if="isDropdownOpen"
+            class="absolute right-0 top-12 w-48 bg-white shadow-lg rounded-lg overflow-hidden z-50"
+          >
+            <ul>
+              <li>
+                <Link
+                  :href="route('user.home')"
+                  class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  :href="route('user.application')"
+                  class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                >
+                  My Applications
+                </Link>
+              </li>
+              <li>
+                <Link
+                  :href="route('user.profile')"
+                  class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                >
+                  My Profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  :href="route('user.logout')"
+                  method="post"
+                  as="button"
+                  class="block px-4 py-2 hover:bg-gray-100 text-red-500 font-semibold"
+                >
+                  Logout
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    </nav>
+    </div>
+  </div>
+</nav>
+
+
 
     <!-- Main Content -->
     <main class="p-6 bg-gray-100" style="position: sticky; top: 0">

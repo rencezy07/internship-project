@@ -81,52 +81,145 @@ const deleteInternship = (internshipId) => {
 };
 </script>
 
+
 <template>
-  <div>
-    <!-- Internship List -->
-    <table>
-      <thead>
-        <tr>
-          <th>Internship Name</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="internship in internships" :key="internship.internship_id">
-          <td>{{ internship.internship_name }}</td>
-          <td>
-            <button @click="editInternship(internship)">Edit</button>
-            <button @click="deleteInternship(internship.internship_id)" class="ml-2 text-red-600">Delete</button>
+  <div class="ml-60 max-w-7xl mx-auto p-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-4xl font-extrabold text-[#00FFAB] tracking-wide">Manage Internships</h1>
+      <i class="fas fa-briefcase text-4xl text-[#00FFAB]"></i>
+    </div>
 
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Internship Table -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <!-- Table Header -->
+        <thead class="bg-[#00FFAB] text-white">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider">Internship Name</th>
+            <th class="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider">City</th>
+            <th class="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider">Salary</th>
+            <th class="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-center text-sm font-bold uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody class="divide-y divide-gray-200">
+          <tr
+            v-for="internship in internships"
+            :key="internship.internship_id"
+            class="hover:bg-gray-50 transition duration-300"
+          >
+            <!-- Internship Name -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-gray-800 font-semibold">{{ internship.internship_name }}</span>
+            </td>
+            <!-- City -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-gray-600">{{ internship.city }}</span>
+            </td>
+            <!-- Salary -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-gray-600">${{ internship.salary }}</span>
+            </td>
+            <!-- Status -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-block px-3 py-1 text-sm font-medium text-white rounded-full"
+                :class="internship.is_open ? 'bg-green-500' : 'bg-red-500'"
+              >
+                {{ internship.is_open ? "Open" : "Closed" }}
+              </span>
+            </td>
+            <!-- Actions -->
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+              <button
+                @click="editInternship(internship)"
+                class="text-blue-500 hover:text-blue-700 transition-all duration-300 mr-3"
+              >
+                <i class="fas fa-edit text-lg"></i>
+              </button>
+              <button
+                @click="deleteInternship(internship.internship_id)"
+                class="text-red-500 hover:text-red-700 transition-all duration-300"
+              >
+                <i class="fas fa-trash text-lg"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <!-- Edit Form -->
-    <div v-if="editingInternship" class="mt-4">
-      <form @submit.prevent="saveInternship">
+    <!-- Edit Internship Form -->
+    <div v-if="editingInternship" class="mt-10 bg-gray-50 rounded-2xl p-8 shadow-lg">
+      <h2 class="text-2xl font-extrabold text-gray-700 mb-6">Edit Internship</h2>
+      <form @submit.prevent="saveInternship" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Internship Name -->
         <div>
-          <label>Internship Name:</label>
-          <input v-model="form.internship_name" type="text" required />
+          <label for="internship_name" class="block text-sm font-bold text-gray-600">Internship Name</label>
+          <input
+            v-model="form.internship_name"
+            type="text"
+            id="internship_name"
+            class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] text-gray-700"
+            placeholder="Enter Internship Name"
+            required
+          />
         </div>
+
+        <!-- City -->
         <div>
-          <label>City:</label>
-          <input v-model="form.city" type="text" required />
+          <label for="city" class="block text-sm font-bold text-gray-600">City</label>
+          <input
+            v-model="form.city"
+            type="text"
+            id="city"
+            class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] text-gray-700"
+            placeholder="Enter City"
+            required
+          />
         </div>
+
+        <!-- Salary -->
         <div>
-          <label>Salary:</label>
-          <input v-model="form.salary" type="number" required />
+          <label for="salary" class="block text-sm font-bold text-gray-600">Salary</label>
+          <input
+            v-model="form.salary"
+            type="number"
+            id="salary"
+            class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] text-gray-700"
+            placeholder="Enter Salary"
+            required
+          />
         </div>
-        <div>
-          <label>
-            <input type="checkbox" v-model="form.is_open" />
-            Open Status
-          </label>
+
+        <!-- Open Status -->
+        <div class="flex items-center mt-6">
+          <label for="is_open" class="text-sm font-bold text-gray-600 mr-3">Open Status:</label>
+          <input
+            v-model="form.is_open"
+            type="checkbox"
+            id="is_open"
+            class="w-5 h-5 text-[#00FFAB] focus:ring-[#00FFAB] border-gray-300 rounded"
+          />
         </div>
-        <div class="mt-2">
-          <button type="submit" :disabled="form.processing">Save</button>
-          <button type="button" @click="cancelEditing">Cancel</button>
+
+        <!-- Buttons -->
+        <div class="col-span-2 flex justify-end space-x-4">
+          <button
+            type="button"
+            @click="cancelEditing"
+            class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="px-6 py-2 bg-[#00FFAB] text-white rounded-md hover:bg-[#00E6A0] transition-all"
+          >
+            Save Changes
+          </button>
         </div>
       </form>
     </div>

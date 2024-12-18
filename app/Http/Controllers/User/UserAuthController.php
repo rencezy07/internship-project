@@ -104,8 +104,7 @@ class UserAuthController extends Controller
             'profile_picture' => $user->profile_picture,
         ],
     ]);
-}
-public function updateProfile(Request $request)
+}public function updateProfile(Request $request)
 {
     $user = auth()->user();
 
@@ -114,7 +113,7 @@ public function updateProfile(Request $request)
         'first_name' => 'required|string|max:255',
         'last_name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-        'current_password' => 'required|string', // Current password is required
+        'current_password' => 'required_if:google_id,null|string', // Only required if not a Google user
         'new_password' => 'nullable|string|confirmed|min:8', // Optional new password
         'dob' => 'required|date',
         'phone_number' => 'required|string|max:15',
@@ -124,8 +123,8 @@ public function updateProfile(Request $request)
         'profile_picture' => 'nullable|file|image|max:2048',
     ]);
 
-    // Verify the current password
-    if (!Hash::check($request->current_password, $user->password)) {
+    // Bypass password check for Google users
+    if ($user->google_id === null && !Hash::check($request->current_password, $user->password)) {
         return back()->withErrors(['current_password' => 'The provided password does not match our records.']);
     }
 
@@ -149,11 +148,24 @@ public function updateProfile(Request $request)
     return back()->with('success', 'Profile updated successfully!');
 }
 
+
 public function destroy(Request $request)
 {
     $user = auth()->user();
 
-    // Validate the current password
+    // Check if the user logged in via Google
+    if ($user->google_id) {
+        // Google users do not have a password, so skip password validation
+        $user->delete();
+
+        // Log the user out
+        auth()->logout();
+
+        // Redirect to the login page or home
+        return redirect()->route('user.login')->with('success', 'Your account has been deleted successfully.');
+    }
+
+    // Validate the current password for non-Google users
     if (!Hash::check($request->current_password, $user->password)) {
         return back()->withErrors(['current_password' => 'The password is incorrect.']);
     }
@@ -167,6 +179,7 @@ public function destroy(Request $request)
     // Redirect to the login page or home
     return redirect()->route('user.login')->with('success', 'Your account has been deleted successfully.');
 }
+
 
 
 

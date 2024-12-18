@@ -29,7 +29,10 @@ class User extends Authenticatable
         'college_level',
         'profile_picture',
         'dob',
+        'google_id', // Add this
+        'avatar',    // Add this
     ];
+    
 
     /**
      * The attributes that should be hidden for serialization.

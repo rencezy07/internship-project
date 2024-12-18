@@ -1,129 +1,137 @@
 <template>
-    <div class="max-w-2xl mx-auto bg-white p-8 shadow-lg rounded-lg">
-        <h2 class="text-2xl font-semibold text-gray-700 mb-6">Register Company</h2>
-
-        <form @submit.prevent="submit">
-            <!-- Company Name -->
-            <div class="mb-4">
-                <label for="company_name" class="block text-sm font-medium text-gray-700">Company Name</label>
+    <div class="min-h-screen flex items-center justify-center bg-white">
+      <!-- Container -->
+      <div class="flex w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Left Section: Image -->
+        <div class="hidden md:block md:w-1/2 bg-gray-100 flex items-center justify-center">
+          <img
+            src="/public/images/company-register.png"
+            alt="Company Image"
+            class="w-full h-auto max-h-[400px] object-contain mx-auto"
+          />
+        </div>
+  
+        <!-- Right Section: Form -->
+        <div class="w-full md:w-1/2 bg-white p-8 flex flex-col justify-center">
+          <!-- Form Header -->
+          <h2 class="text-3xl font-bold text-black mb-6 text-center">
+            Register Your Company
+          </h2>
+          <div class="h-1 w-16 bg-[#00FFAB] mx-auto mb-6 rounded"></div>
+  
+          <!-- Form -->
+          <form @submit.prevent="submit">
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Company Name -->
+              <div>
+                <label for="company_name" class="block text-sm font-medium text-black">Company Name</label>
                 <input
-                    v-model="form.company_name"
-                    type="text"
-                    id="company_name"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    required
+                  v-model="form.company_name"
+                  type="text"
+                  id="company_name"
+                  class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] focus:outline-none"
+                  placeholder="Company name"
+                  required
                 />
-                <div v-if="form.errors.company_name" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.company_name }}
-                </div>
-            </div>
-
-            <!-- Email -->
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              </div>
+  
+              <!-- Email -->
+              <div>
+                <label for="email" class="block text-sm font-medium text-black">Email</label>
                 <input
-                    v-model="form.email"
-                    type="email"
-                    id="email"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    required
+                  v-model="form.email"
+                  type="email"
+                  id="email"
+                  class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] focus:outline-none"
+                  placeholder="example@domain.com"
+                  required
                 />
-                <div v-if="form.errors.email" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.email }}
-                </div>
-            </div>
-
-            <!-- Password -->
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+              </div>
+  
+              <!-- Password -->
+              <div>
+                <label for="password" class="block text-sm font-medium text-black">Password</label>
                 <input
-                    v-model="form.password"
-                    type="password"
-                    id="password"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    required
+                  v-model="form.password"
+                  type="password"
+                  id="password"
+                  class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] focus:outline-none"
+                  placeholder="••••••••"
+                  required
                 />
-                <div v-if="form.errors.password" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.password }}
-                </div>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="mb-4">
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+              </div>
+  
+              <!-- Confirm Password -->
+              <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-black">Confirm Password</label>
                 <input
-                    v-model="form.password_confirmation"
-                    type="password"
-                    id="password_confirmation"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    required
+                  v-model="form.password_confirmation"
+                  type="password"
+                  id="password_confirmation"
+                  class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] focus:outline-none"
+                  placeholder="Re-enter password"
+                  required
                 />
-                <div v-if="form.errors.password_confirmation" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.password_confirmation }}
-                </div>
-            </div>
-
-            <!-- Location -->
-            <div class="mb-4">
-                <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+              </div>
+  
+              <!-- Location: Full Row -->
+              <div class="col-span-2">
+                <label for="location" class="block text-sm font-medium text-black">Location</label>
                 <input
-                    v-model="form.location"
-                    type="text"
-                    id="location"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    required
+                  v-model="form.location"
+                  type="text"
+                  id="location"
+                  class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00FFAB] focus:outline-none"
+                  placeholder="e.g., City, Country"
+                  required
                 />
-                <div v-if="form.errors.location" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.location }}
-                </div>
-            </div>
-
-            <!-- Company Logo -->
-            <div class="mb-4">
-                <label for="company_logo" class="block text-sm font-medium text-gray-700">Company Logo</label>
+              </div>
+  
+              <!-- Company Logo -->
+              <div>
+                <label for="company_logo" class="block text-sm font-medium text-black">Company Logo</label>
                 <input
-                    type="file"
-                    id="company_logo"
-                    name="company_logo"
-                    @change="handleFileChange"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    accept="image/*"
-                    required
+                  type="file"
+                  id="company_logo"
+                  name="company_logo"
+                  @change="handleFileChange"
+                  class="mt-1 w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-white file:bg-[#00FFAB] hover:file:bg-black transition duration-300"
+                  accept="image/*"
+                  required
                 />
-                <div v-if="form.errors.company_logo" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.company_logo }}
-                </div>
-            </div>
-
-            <!-- Business Permit -->
-            <div class="mb-4">
-                <label for="business_permit" class="block text-sm font-medium text-gray-700">Business Permit</label>
+              </div>
+  
+              <!-- Business Permit -->
+              <div>
+                <label for="business_permit" class="block text-sm font-medium text-black">Business Permit</label>
                 <input
-                    type="file"
-                    id="business_permit"
-                    name="business_permit"
-                    @change="handleFileChange"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    accept=".pdf,.docx,.doc"
-                    required
+                  type="file"
+                  id="business_permit"
+                  name="business_permit"
+                  @change="handleFileChange"
+                  class="mt-1 w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-white file:bg-[#00FFAB] hover:file:bg-black transition duration-300"
+                  accept=".pdf,.docx,.doc"
+                  required
                 />
-                <div v-if="form.errors.business_permit" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.business_permit }}
-                </div>
+              </div>
             </div>
-
+  
             <!-- Submit Button -->
-            <div class="text-right">
-                <button
-                    type="submit"
-                    class="bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
-                >
-                    Register Company
-                </button>
+            <div class="text-center mt-6">
+              <button
+                type="submit"
+                class="w-full bg-[#00FFAB] text-black font-bold py-2 rounded-md hover:bg-black hover:text-white transition duration-300"
+              >
+                Register Company
+              </button>
             </div>
-        </form>
+          </form>
+        </div>
+      </div>
     </div>
-</template>
+  </template>
+  
 
 <script setup>
 import { useForm } from '@inertiajs/vue3';

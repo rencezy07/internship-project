@@ -44,7 +44,7 @@ class AdminAuthController extends Controller
         $request->session()->regenerateToken();
     
         // Redirect to the admin login page
-        return redirect()->route('admin.login');
+        return Inertia::location(route('admin.login'));
     }
     
 }

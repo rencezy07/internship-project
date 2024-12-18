@@ -6,7 +6,12 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
+
+
 {
+
+
+    
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -47,4 +52,6 @@ class HandleInertiaRequests extends Middleware
             ]
         ]);
     }
+
+    
 }

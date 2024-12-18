@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Company;
+use Inertia\Inertia;
 
 use App\Models\Internship;
 use App\Models\Application;
@@ -16,8 +17,54 @@ class CompanyDashboardController extends Controller
 {
     public function index()
     {
-        return inertia('Company/Dashboard');
+        $companyId = Auth::guard('company')->id();
+    
+        if (!$companyId) {
+            abort(403, 'Unauthorized');
+        }
+    
+        $totalApplications = Application::whereHas('internship', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })->count();
+    
+        $underReviewApplications = Application::whereHas('internship', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })->where('status', 'under review')->count();
+    
+        $acceptedApplications = Application::whereHas('internship', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })->where('status', 'accepted')->count();
+    
+        $rejectedApplicationsCount = Application::whereHas('internship', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })->where('status', 'rejected')->count();
+    
+        // Load the 'internship' and 'user' relationships for recent applications
+        $recentApplications = Application::whereHas('internship', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })
+            ->with(['internship', 'user']) // Eager load the relationships
+            ->latest()
+            ->take(5)
+            ->get();
+    
+        return Inertia::render('Company/Dashboard', [
+            'totalApplications' => $totalApplications,
+            'underReviewApplications' => $underReviewApplications,
+            'acceptedApplications' => $acceptedApplications,
+            'rejectedApplicationsCount' => $rejectedApplicationsCount,
+            'recentApplications' => $recentApplications,
+            'auth' => ['user' => auth()->user()],
+        ]);
     }
+    
+    
+    
+    
+
+    
+    
+    
    
     public function showInternship()
     {

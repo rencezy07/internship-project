@@ -13,6 +13,8 @@ use App\Http\Controllers\Company\CompanyAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Company\CompanyDashboardController;
 
+//-----------------------------------Google Routes
+use App\Http\Controllers\User\GoogleController;
 
 // ---------------------------------- Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -36,6 +38,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/view-users', [AdminDashboardController::class, 'viewUsers'])->name('view-users');
 
         Route::get('/view-companies', [AdminDashboardController::class, 'viewCompanies'])->name('view-companies');
+
+            // Activity Logs Route
+    Route::get('/activity-logs', [AdminDashboardController::class, 'activityLogs'])->name('activity-logs');
 
 
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
@@ -101,6 +106,8 @@ Route::get('/login', function () {
 })->name('login');
 
 
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 
 
 // ---------------------------------- User Routes
@@ -127,6 +134,9 @@ Route::prefix('user')->name('user.')->group(function () {
 
     });
 });
+
+//activity logsssss route
+
 
 // // Default Laravel Profile and Dashboard (Optional)
 // Route::middleware('auth')->group(function () {

@@ -1,23 +1,23 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { useForm } from "@inertiajs/vue3";
 
 const form = useForm({
-  first_name: '',
-  last_name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  dob: '',
-  phone_number: '', // Match database field name
-  gender: 'male',
-  university: '',
-  college_level: 'freshman', // New field
-  profile_picture: null, // File
+  first_name: "",
+  last_name: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
+  dob: "",
+  phone_number: "",
+  gender: "male",
+  university: "",
+  college_level: "freshman",
+  profile_picture: null,
 });
 
 const submit = () => {
-  form.post(route('user.register'), {
-    onFinish: () => form.reset('password'),
+  form.post(route("user.register"), {
+    onFinish: () => form.reset("password"),
   });
 };
 
@@ -27,173 +27,175 @@ const handleFileChange = (e) => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Register</h2>
-    <form @submit.prevent="submit">
-      <!-- First Name -->
-      <div class="mb-4">
-        <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
-        <input
-          v-model="form.first_name"
-          type="text"
-          id="first_name"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Enter your first name"
-          required
-        />
-      </div>
+  <div class="flex h-screen items-center justify-center text-white px-4">
+    <div class="w-full max-w-xl bg-white text-black rounded-lg shadow-lg px-6 py-8">
+      <h1 class="text-lg md:text-xl font-extrabold text-center text-black mb-6">
+        Create Your Account
+      </h1>
 
-      <!-- Last Name -->
-      <div class="mb-4">
-        <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
-        <input
-          v-model="form.last_name"
-          type="text"
-          id="last_name"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Enter your last name"
-          required
-        />
-      </div>
+      <!-- Responsive Form -->
+      <form
+        @submit.prevent="submit"
+        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
+        <!-- First Name -->
+        <div class="relative">
+          <i class="fas fa-user absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.first_name"
+            type="text"
+            placeholder="First Name"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-      <!-- Email -->
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-        <input
-          v-model="form.email"
-          type="email"
-          id="email"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Enter your email"
-          required
-          autocomplete="email"
+        <!-- Last Name -->
+        <div class="relative">
+          <i class="fas fa-user absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.last_name"
+            type="text"
+            placeholder="Last Name"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-        />
-        <div v-if="form.errors.email" class="text-red-500 text-sm">
-    {{ form.errors.email }}
-  </div>
-      </div>
+        <!-- Email -->
+        <div class="relative">
+          <i class="fas fa-envelope absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.email"
+            type="email"
+            placeholder="Email"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+          <div v-if="form.errors.email" class="text-red-500 text-sm mt-1">
+            {{ form.errors.email }}
+          </div>
+        </div>
 
-      <!-- Password -->
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input
-          v-model="form.password"
-          type="password"
-          id="password"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Enter your password"
-          required
-          autocomplete="new-password"
+        <!-- Password -->
+        <div class="relative">
+          <i class="fas fa-lock absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.password"
+            type="password"
+            placeholder="Password"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-        />
-      </div>
+        <!-- Confirm Password -->
+        <div class="relative">
+          <i class="fas fa-lock absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.password_confirmation"
+            type="password"
+            placeholder="Confirm Password"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-      <!-- Confirm Password -->
-      <div class="mb-4">
-        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-        <input
-          v-model="form.password_confirmation"
-          type="password"
-          id="password_confirmation"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Confirm your password"
-          required
-          autocomplete="new-password"
+        <!-- Date of Birth -->
+        <div class="relative">
+          <i class="fas fa-calendar-alt absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.dob"
+            type="date"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-        />
-      </div>
+        <!-- Phone Number -->
+        <div class="relative">
+          <i class="fas fa-phone absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.phone_number"
+            type="tel"
+            placeholder="Phone Number"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-      <!-- Date of Birth -->
-      <div class="mb-4">
-        <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
-        <input
-          v-model="form.dob"
-          type="date"
-          id="dob"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          required
-        />
-      </div>
+        <!-- Gender -->
+        <div class="relative">
+          <i class="fas fa-venus-mars absolute top-3 left-3 text-gray-400"></i>
+          <select
+            v-model="form.gender"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
 
-      <!-- Phone -->
-      <div class="mb-4">
-        <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
-        <input
-          v-model="form.phone_number"
-          type="tel"
-          id="phone_number"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Enter your phone number"
-          required
-        />
-      </div>
+        <!-- University -->
+        <div class="relative">
+          <i class="fas fa-university absolute top-3 left-3 text-gray-400"></i>
+          <input
+            v-model="form.university"
+            type="text"
+            placeholder="University"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-      <!-- Gender -->
-      <div class="mb-4">
-        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
-        <select
-          v-model="form.gender"
-          id="gender"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          required
-        >
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
+        <!-- College Level -->
+        <div class="relative">
+          <i class="fas fa-graduation-cap absolute top-3 left-3 text-gray-400"></i>
+          <select
+            v-model="form.college_level"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          >
+            <option value="freshman">Freshman</option>
+            <option value="sophomore">Sophomore</option>
+            <option value="junior">Junior</option>
+            <option value="senior">Senior</option>
+          </select>
+        </div>
 
-      <!-- University -->
-      <div class="mb-4">
-        <label for="university" class="block text-sm font-medium text-gray-700">University</label>
-        <input
-          v-model="form.university"
-          type="text"
-          id="university"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Enter your university"
-          required
-        />
-      </div>
+        <!-- Profile Picture -->
+        <div class="relative col-span-1 md:col-span-2">
+          <i class="fas fa-camera absolute top-3 left-3 text-gray-400"></i>
+          <input
+            type="file"
+            @change="handleFileChange"
+            required
+            class="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00FFAB] text-sm md:text-base"
+          />
+        </div>
 
-      <!-- College Level -->
-      <div class="mb-4">
-        <label for="college_level" class="block text-sm font-medium text-gray-700">College Level</label>
-        <select
-          v-model="form.college_level"
-          id="college_level"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          required
-        >
-          <option value="freshman">Freshman</option>
-          <option value="sophomore">Sophomore</option>
-          <option value="junior">Junior</option>
-          <option value="senior">Senior</option>
-        </select>
-      </div>
-
-      <!-- Profile Picture -->
-      <div class="mb-4">
-        <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
-        <input
-          type="file"
-          id="profile_picture"
-          @change="handleFileChange"
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          required
-        />
-      </div>
-
-      <!-- Submit Button -->
-      <div class="mb-4 text-right">
-        <button
-          type="submit"
-          class="bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
-        >
-          Register
-        </button>
-      </div>
-    </form>
+        <!-- Submit Button -->
+        <div class="col-span-1 md:col-span-2 flex justify-center">
+          <button
+            type="submit"
+            class="w-full md:w-1/2 py-2 bg-[#00FFAB] text-black font-bold rounded-md hover:bg-[#00E6A0] transition duration-300 transform hover:scale-105"
+          >
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
+
+
+<style scoped>
+/* Smooth transitions for inputs and buttons */
+input,
+select,
+button {
+  transition: border 0.3s, box-shadow 0.3s, background-color 0.3s, transform 0.3s;
+}
+</style>
