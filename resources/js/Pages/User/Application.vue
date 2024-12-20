@@ -39,7 +39,8 @@ const filteredApplications = computed(() => {
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-extrabold text-gray-800 tracking-wide">
-                <i class="fas fa-briefcase text-[#00FFAB] mr-2"></i> My Applications
+                <i class="fas fa-briefcase text-[#00FFAB] mr-2"></i> My
+                Applications
             </h1>
         </div>
 

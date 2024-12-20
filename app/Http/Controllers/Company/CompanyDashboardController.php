@@ -59,13 +59,6 @@ class CompanyDashboardController extends Controller
     }
     
     
-    
-    
-
-    
-    
-    
-   
     public function showInternship()
     {
         // Get the authenticated company ID
@@ -79,8 +72,6 @@ class CompanyDashboardController extends Controller
             'internships' => $internships,
         ]);
     }
-
-
 
     public function storeInternship(Request $request)
     {
@@ -117,8 +108,6 @@ class CompanyDashboardController extends Controller
 
     }
     
-
-
     // user under review ---------------------------
 
     public function manageInternshipsApplication()
@@ -163,8 +152,6 @@ public function updateApplicationStatus(Request $request, $applicationId)
         'message' => 'Application status updated successfully.',
     ]);
 }
-
-
 private function sendNotificationToUser($user, $status, $internshipName, $companyName)
 {
     // Send notification to the user
@@ -181,22 +168,24 @@ public function profile()
     ]);
 }
 
-
-
-
 public function updateProfile(Request $request)
 {
+    // Check if the company is authenticated
+    if (!Auth::guard('company')->check()) {
+        return redirect()->route('company.login')->with('error', 'You need to log in to update your profile.');
+    }
+
     $company = Auth::guard('company')->user();
 
     // Validate the request
     $validated = $request->validate([
         'company_name' => 'required|string|max:255',
-        'email' => 'required|email|unique:company,email,' . $company->company_id . ',company_id', // Unique validation for the company table
+        'email' => 'required|email|unique:company,email,' . $company->company_id . ',company_id',
         'location' => 'required|string|max:255',
-        'company_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Optional file upload
-        'business_permit' => 'nullable|mimes:pdf|max:4096', // Optional PDF upload
-        'password' => 'required|string', // Current password is required
-        'new_password' => 'nullable|string|min:8|same:confirm_password', // Optional password change
+        'company_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'business_permit' => 'nullable|mimes:pdf|max:4096',
+        'password' => 'required|string',
+        'new_password' => 'nullable|string|min:8|same:confirm_password',
     ]);
 
     // Verify the current password
@@ -204,32 +193,37 @@ public function updateProfile(Request $request)
         return back()->withErrors(['password' => 'The provided password is incorrect.']);
     }
 
-    // Handle file uploads
-    if ($request->hasFile('company_logo')) {
-        $validated['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
+    try {
+        // Handle file uploads
+        if ($request->hasFile('company_logo')) {
+            $validated['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
+        }
+
+        if ($request->hasFile('business_permit')) {
+            $validated['business_permit'] = $request->file('business_permit')->store('business_permits', 'public');
+        }
+
+        // Update the password if a new password is provided
+        if (!empty($validated['new_password'])) {
+            $company->password = bcrypt($validated['new_password']);
+        }
+
+        // Update the company's details
+        $company->update([
+            'company_name' => $validated['company_name'],
+            'email' => $validated['email'],
+            'location' => $validated['location'],
+            'company_logo' => $validated['company_logo'] ?? $company->company_logo,
+            'business_permit' => $validated['business_permit'] ?? $company->business_permit,
+        ]);
+
+        return redirect()->route('company.profile')
+                         ->with('success', 'Profile updated successfully.');
+    } catch (\Exception $e) {
+        // Handle any unexpected errors
+        return back()->with('error', 'Something went wrong. Please try again later.');
     }
-
-    if ($request->hasFile('business_permit')) {
-        $validated['business_permit'] = $request->file('business_permit')->store('business_permits', 'public');
-    }
-
-    // Update the password if a new password is provided
-    if (!empty($validated['new_password'])) {
-        $company->password = bcrypt($validated['new_password']);
-    }
-
-    // Update the company's details
-    $company->update([
-        'company_name' => $validated['company_name'],
-        'email' => $validated['email'],
-        'location' => $validated['location'],
-        'company_logo' => $validated['company_logo'] ?? $company->company_logo,
-        'business_permit' => $validated['business_permit'] ?? $company->business_permit,
-    ]);
-
-    return redirect()->route('company.profile')->with('success', 'Profile updated successfully.');
 }
-
 
 
 
@@ -244,8 +238,6 @@ public function manageAllInternships()
     ]);
 }
 
-
-    
 public function manageInternships()
 {
     $companyId = Auth::guard('company')->id();
@@ -256,8 +248,6 @@ public function manageInternships()
         'internships' => $internships,
     ]);
 }
-
-
 
 public function updateInternship(Request $request, $internshipId)
 {
@@ -276,8 +266,6 @@ public function updateInternship(Request $request, $internshipId)
 
 }
 
-
-
 public function deleteInternship($internshipId)
 {
     // Find and delete the internship
@@ -287,7 +275,6 @@ public function deleteInternship($internshipId)
     return back()->with('success', 'Internship Deleted Successfully.');
 
 }
-
 
 
 }

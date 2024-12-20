@@ -111,9 +111,6 @@ public function viewUsers()
     return inertia('Admin/DisplayUsers', ['users' => $users]);
 }
 
-
-    
-
 public function viewCompanies()
 {
     $companies = Company::select('company_id', 'company_logo', 'company_name', 'email')->get();
@@ -142,8 +139,6 @@ $summaries = CompanyApplicationSummary::all();
         'summaries' => $summaries, // Pass the materialized view data
 ]);
 }
-
-
 
 public function studentInternshipApplications($id = null)
 {
@@ -207,8 +202,4 @@ public function activityLogs(Request $request)
         ]);
     }
 
-    //MATERIALIZED VIEW--------------------
-
-    
-    
 }

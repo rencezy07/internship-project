@@ -12,7 +12,6 @@ use App\Models\UserApplicationSummary;
 class UserDashboardController extends Controller
 {   
 
-    
 
     public function home()
     {
@@ -38,8 +37,6 @@ class UserDashboardController extends Controller
         ]);
     }
     
-
- 
 
     // Handle the internship application
     public function apply(Request $request, $internshipId)
@@ -107,20 +104,4 @@ class UserDashboardController extends Controller
         ]);
     }
     
-
-
-    // public function rejectApplication($internshipId)
-    // {
-    //     $application = Application::where("user_id", auth()->id())
-    //         ->where("internship_id", $internshipId)
-    //         ->first();
-
-    //     if ($application) {
-    //         $application->update(["status" => "rejected"]); // or set 'is_rejected' to true
-    //     }
-
-    //     return redirect()
-    //         ->back()
-    //         ->with("success", "Application has been rejected.");
-    // }
 }

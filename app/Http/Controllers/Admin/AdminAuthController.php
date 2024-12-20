@@ -25,13 +25,20 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
+    
         if (Auth::guard('admin')->attempt($credentials)) {
+            // Update the last_login_at field
+            $admin = Auth::guard('admin')->user();
+            $admin->last_login_at = now();
+            $admin->save();
+    
+            // Redirect to the admin dashboard
             return redirect()->route('admin.dashboard');
         }
-
+    
         return back()->withErrors(['email' => 'Invalid credentials']);
     }
+    
 
     public function destroy(Request $request)
     {

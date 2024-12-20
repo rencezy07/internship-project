@@ -30,6 +30,10 @@ class CompanyAuthController extends Controller
                 ]);
             }
     
+            // Update the last_login_at field
+            $company->last_login_at = now();
+            $company->save();
+    
             // Redirect to the dashboard if verified
             return redirect()->route('company.dashboard');
         }
@@ -40,7 +44,6 @@ class CompanyAuthController extends Controller
     }
     
     
-
     public function showRegister()
     {
         return inertia('Company/Auth/Register');

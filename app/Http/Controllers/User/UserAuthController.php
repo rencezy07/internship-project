@@ -8,35 +8,35 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\InternshipWithCompany;
+use Illuminate\Support\Facades\DB;
+
 
 class UserAuthController extends Controller
 {
     public function showLogin()
     {
-        // $internships = InternshipWithCompany::select('internship_name', 'company_name', 'city', 'employment_type', 'is_open')->get();// Adjust this to your model and data as needed
-        // return inertia('User/Auth/Login', [
-        //     'internships' => $internships, // Send internships to the frontend
-
-        // ]);
 
             return inertia('User/Auth/Login');
 
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
+    if (Auth::guard('user')->attempt($credentials)) {
+        // Update last_login_at for the authenticated user
+        $user = Auth::guard('user')->user();
+        $user->last_login_at = now();
+        $user->save();
 
-
-        if (Auth::guard('user')->attempt($credentials)) {
-            return redirect()->route('user.home');
-        }
-
-        return back()->withErrors(['email' => 'Invalid Credentials']);
+        // Redirect to user home
+        return redirect()->route('user.home');
     }
 
-   
+    return back()->withErrors(['email' => 'Invalid Credentials']);
+}
+
     public function showRegister() {
         return inertia('User/Auth/Register');
     }
@@ -82,10 +82,22 @@ class UserAuthController extends Controller
     
     public function logout()
     {
+        // Get the authenticated user
+        $user = Auth::guard('user')->user();
+    
+        if ($user) {
+            // Update the last_logout_at field to trigger the log
+            $user->last_logout_at = now();
+            $user->save();
+        }
+    
+        // Perform the logout
         Auth::guard('user')->logout();
-
+    
+        // Redirect to the login page
         return redirect()->route('user.login');
     }
+    
 
     public function showProfile()
 {
@@ -102,6 +114,8 @@ class UserAuthController extends Controller
             'university' => $user->university,
             'college_level' => $user->college_level,
             'profile_picture' => $user->profile_picture,
+            'avatar' => $user->avatar ?? null, // Ensure avatar is included even if null
+
         ],
     ]);
 }public function updateProfile(Request $request)
@@ -153,6 +167,15 @@ public function destroy(Request $request)
 {
     $user = auth()->user();
 
+    // Log the account deletion in the activity_logs table
+    DB::table('activity_logs')->insert([
+        'user_type' => 'user',
+        'user_id' => $user->id,
+        'action_performed' => 'User "' . $user->first_name . '" (ID: ' . $user->id . ') deleted their account',
+        'table_name' => 'users',
+        'created_at' => now(),
+    ]);
+
     // Check if the user logged in via Google
     if ($user->google_id) {
         // Google users do not have a password, so skip password validation
@@ -179,6 +202,7 @@ public function destroy(Request $request)
     // Redirect to the login page or home
     return redirect()->route('user.login')->with('success', 'Your account has been deleted successfully.');
 }
+
 
 
 
