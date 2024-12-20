@@ -53,8 +53,8 @@ public function login(Request $request)
 
         
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+'first_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+'last_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
             'phone_number' => 'required|string|max:15',

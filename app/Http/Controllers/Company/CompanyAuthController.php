@@ -53,7 +53,7 @@ class CompanyAuthController extends Controller
     {
         // Validate the incoming data
         $validated = $request->validate([
-            'company_name' => 'required|string|max:255',
+'company_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
             'email' => 'required|email|unique:company,email',
             'password' => 'required|string|confirmed|min:6',
             'location' => 'required|string|max:255', // Required location

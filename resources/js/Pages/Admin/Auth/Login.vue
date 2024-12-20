@@ -57,6 +57,16 @@ const submit = () => {
                     ></div>
                 </div>
 
+
+         <!-- Display All Errors Below the Heading -->
+         <div v-if="Object.keys(form.errors).length" class="bg-red-100 text-red-600 p-4 rounded-md mb-6">
+        <ul class="list-disc pl-5">
+          <li v-for="(error, field) in form.errors" :key="field">
+            {{ error }}
+          </li>
+        </ul>
+      </div>
+
                 <!-- Form -->
                 <form @submit.prevent="submit" class="space-y-6">
                     <!-- Email Field -->
